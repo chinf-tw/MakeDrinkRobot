@@ -43,8 +43,11 @@ C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.csproj.C
 C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.csproj.CopyComplete
 C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.exe
 C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.pdb
-C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.Form_camSetting.resources
 C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\CS_Form_PtSetting.exe
 C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\CS_Form_PtSetting.pdb
 C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\CS_Form_PtSetting.exe.config
-C:\code\Multimodal_drink\multimodal\multimodal\obj\x64\Debug\multimodal.exe.config
+C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\x86\concrt140.dll
+C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\x86\cvextern.dll
+C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\x86\msvcp140.dll
+C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\x86\opencv_videoio_ffmpeg411.dll
+C:\code\Multimodal_drink\multimodal\multimodal\bin\x64\Debug\x86\vcruntime140.dll

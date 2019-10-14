@@ -54,7 +54,7 @@ namespace multimodal
         static int OpenCamIndex = 1;
         const int MAXCAM = 2;
         Mat[] t_matrix;
-        Form_camSetting cam_set = new Form_camSetting();
+        Form_PtSetting cam_set = new Form_PtSetting();
 
 
 
@@ -258,12 +258,14 @@ namespace multimodal
             count = 0;
             textBox2.Text = "What kinds of drink do you want?";
             textBox5.Text = "(1: Black Tea 2: Lemon Water 3: Leamon Tea)";
-            
 
-            
-         //   cap.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 640);
-        //    cap.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 480);
-            cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+
+
+            //   cap.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 640);
+            //    cap.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 480);
+
+            cap = new Emgu.CV.VideoCapture(0, VideoCapture.API.DShow);
+            // = new VideoCapture(1);
 
             gestureWrapper = new YoloWrapper("yolov2-tiny_number_test.cfg", "yolov2-tiny_number_90000.weights", "number.names");
             
@@ -356,7 +358,7 @@ namespace multimodal
                     var c1x = cx1 + cw1 / 2;
                     var c1y = cy1 + ch1 / 2;
 
-                    cup_one = cam_set.I2W(c1x, c1y, OpenCamIndex);
+                    //cup_one = cam_set.I2W(c1x, c1y, OpenCamIndex);
 
                     textBox2.Text = "Test";
                    // URclass_2g.robotGoPos_2g(new URCoordinate_2g(cup_one.Y, 0.250, cup_one.X, 2.2, -2.2, 0, 0, 0), true);
@@ -380,13 +382,13 @@ namespace multimodal
 
 
 
-                bottle_right = cam_set.I2W(prx, pry, OpenCamIndex);  //轉正後的世界座標
+            //    bottle_right = cam_set.I2W(prx, pry, OpenCamIndex);  //轉正後的世界座標
 
 
                 var pcx = bcx + bcw / 2;
                 var pcy = bcy + bch / 2;
 
-                bottle_center = cam_set.I2W(pcx, pcy, OpenCamIndex);   //轉正後的世界座標
+        //        bottle_center = cam_set.I2W(pcx, pcy, OpenCamIndex);   //轉正後的世界座標
 
 
                 mode_4 = false;
@@ -417,13 +419,20 @@ namespace multimodal
                 var plx = blx + blw / 2;
                 var ply = bly + blh / 2;
 
-                bottle_left = cam_set.I2W(plx, ply, OpenCamIndex);   //轉正後的點
+        //        bottle_left = cam_set.I2W(plx, ply, OpenCamIndex);   //轉正後的點
             }
         }
 
 
         void Show_capture_g(object sender, EventArgs e)
         {
+            while (true)
+            {
+                Mat img;
+                img = cap.QueryFrame();
+                if (img != null || img.Width != 0)
+                    break;
+            }
             cap_img = cap.QueryFrame().Bitmap;
 
             System.Drawing.Rectangle rect1;
