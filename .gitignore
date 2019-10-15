@@ -1,3 +1,5 @@
 .vs
 packages
 multimodal/bin
+*~
+multimodal/obj/

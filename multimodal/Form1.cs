@@ -99,15 +99,41 @@ namespace multimodal
 
         private void button2_Click(object sender, EventArgs e)
         {
-            URclass_2g.ServerOn_2g("192.168.1.102", 21);
+            URclass_2g.ServerOn_2g("192.168.1.104", 2000);
+            URclass_left.ServerOn("192.168.1.104", 2001);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
+            URclass_left.robotGoPos(new URCoordinate(0.360, -0.130, 0.310, 0.35, 3.18, 0.45, 0, 0), true);
 
+
+
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.100, 0.120, 2, -2, -0.34, 0, 0), true);
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 0, 0), true);
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 80, 0), true);
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.0826, 0.120, 2, -2, -0.34, 80, 0), true);
+            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.280, 0.0826, -0.268, 2.2, -2.16, -0.018, 80, 0), true);
+
+            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.074, 4.7, 0.2, 0.08, 0, 0), true);
+            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.001, 4.7, 0.2, 0.08, 0, 0), true);
+            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.001, 4.7, 0.2, 0.08, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -1.5, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, -0.005, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
+
+
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, -0.005, 0.120, 2, -2, -0.34, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 60, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 0, 0), true);
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.100, 0.120, 2, -2, -0.34, 0, 0), true);
+
+            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
         }
 
-        
+
 
         private void button_settingFrom_Click(object sender, EventArgs e)
         {
