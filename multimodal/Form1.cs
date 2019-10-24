@@ -18,7 +18,8 @@ using System.Timers;
 using System.Runtime.InteropServices;
 using TreadingTimer = System.Threading.Timer;
 
-using Microsoft.Kinect;
+using dynamixel_sdk;
+
 
 using Alturos;
 using Alturos.Yolo;
@@ -31,14 +32,37 @@ using Emgu.CV.Util;
 using Emgu.CV.CvEnum;
 
 using PerspectiveTransformSetting;
+using URControler2;
 
 
 namespace multimodal
 {
     public partial class Form1 : Form
     {
-        Class_URcontrol_left URclass_left = new Class_URcontrol_left();
-        Class_URcontrol_2g URclass_2g = new Class_URcontrol_2g();
+
+        URServerAction uRServerAction_left;
+        URServerAction uRServerAction_right;
+
+
+        // parameter ///////
+        float[] robot_initial_pos_r = { -0.288F, 0.069F, 0.322F, 1.23F, -2.59F, -0.83F };
+        float[] robot_initial_pos_l = { 0.418F, -0.120F, 0.216F, 2.5F, 2.28F, 0.35F };
+        float[] robot_initial_pos_rc = { -0.337F, 0.110F, -0.123F, 2.174F, -2.233F, 0.002F };
+        float[] robot_initial_pos_lc = { 0.343F, -0.100F, -0.1498F, 2.441F, 2.36F, 2.504F };
+
+        float image_right_x = -0.055F;
+        float image_right_y = 0.02F;
+
+        float image_left_x = 0.050F;
+        float image_left_y = 0.04F;
+
+        ///////////////////////////////////////////////
+
+
+        MxMotor motor1;
+        int test;
+        int initial_pos = 2000;
+        int obj_pos = 1350;
 
 
         YoloWrapper gestureWrapper;
@@ -51,10 +75,12 @@ namespace multimodal
         Bitmap cap_img;
         Mat img1;
 
-        static int OpenCamIndex = 1;
+        static int OpenCamIndex_right = 1;
+        static int OpenCamIndex_left = 0;
         const int MAXCAM = 2;
         Mat[] t_matrix;
-        Form_PtSetting cam_set = new Form_PtSetting();
+        Form_PtSetting cam_set_right = new Form_PtSetting();
+        Form_PtSetting cam_set_left = new Form_PtSetting();
 
 
 
@@ -83,60 +109,116 @@ namespace multimodal
         int count, count1, count2, count3 = 0; //計數
         System.Windows.Forms.Timer timer;
 
-        System.Drawing.PointF bottle_right;
-        System.Drawing.PointF bottle_center;
-        System.Drawing.PointF bottle_left;
-        System.Drawing.PointF cup_one;
-        System.Drawing.PointF cup_two;
-        System.Drawing.PointF cup_three;
+        //float[] bottle_right = new float[] { 0, 0 };
+        float[] bottle_center = new float[] { 0, 0 };
+        float[]  bottle_left = new float[] { 0, 0 };
+        float[] cup_one = new float[] { 0,0};
+        float[] cup_two = new float[] { 0, 0 };
+        float[] cup_three = new float[] { 0, 0 };
+
+        //float[] bottle_right_f;
+        //float[] bottle_left_f;
+        float[] cup_one_f;
+        float[] cup_two_f;
+        float[] cup_three_f;
 
         double Obj_X;
         double Obj_Y;
         double[] Obj_Pos = new double[2];
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
 
 
 
 
         private void button2_Click(object sender, EventArgs e)
         {
-            URclass_2g.ServerOn_2g("192.168.1.104", 2000);
-            URclass_left.ServerOn("192.168.1.104", 2001);
+            int port_r = 1101;
+            string addr = "0.0.0.0";
+            ListenerBaseTcpListener listener_r = new ListenerBaseTcpListener(port_r, addr);
+            Thread t_r = new Thread(new ThreadStart(listener_r.RunServer));
+            t_r.Start();
+            var stream_r = listener_r.GetNetworkStream();
+
+            if (stream_r == null)
+            {
+                Console.Write("Waiting for a connection... ");
+            }
+            while (stream_r == null)
+            {
+                stream_r = listener_r.GetNetworkStream();
+            }
+            Console.WriteLine("Connected!");
+            uRServerAction_right = new URServerAction(stream_r);
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////
+
+            int port_l = 1100;
+            string addr_l = "0.0.0.0";
+            ListenerBaseTcpListener listener_l = new ListenerBaseTcpListener(port_l, addr_l);
+            Thread t_l = new Thread(new ThreadStart(listener_l.RunServer));
+            t_l.Start();
+            var stream_l = listener_l.GetNetworkStream();
+
+            if (stream_l == null)
+            {
+                Console.Write("Waiting for a connection... ");
+            }
+            while (stream_l == null)
+            {
+                stream_l = listener_l.GetNetworkStream();
+            }
+            Console.WriteLine("Connected!");
+            uRServerAction_left = new URServerAction(stream_l);
+
+           // uRServerAction_left.Move(robot_initial_pos_l);
+
+
+
+            //uRServerAction.FreeDrive(10000);           
+            //uRServerAction.TurnJoint(3);
+            //uRServerAction.MoveJoint(0, -0.5F);
+
+
+            //uRServerAction_right.ForceMode(0, 10);
+            //Thread.Sleep(5000);
+            //uRServerAction_right.EndForceMode();
+            //Console.WriteLine("***end");
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
-            URclass_left.robotGoPos(new URCoordinate(0.360, -0.130, 0.310, 0.35, 3.18, 0.45, 0, 0), true);
+            uRServerAction_right.ForceMode(0,-15);
+            Thread.Sleep(5000);
+            uRServerAction_right.EndForceMode();
 
 
 
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.100, 0.120, 2, -2, -0.34, 0, 0), true);
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 0, 0), true);
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 80, 0), true);
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.0826, 0.120, 2, -2, -0.34, 80, 0), true);
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.280, 0.0826, -0.268, 2.2, -2.16, -0.018, 80, 0), true);
-
-            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.074, 4.7, 0.2, 0.08, 0, 0), true);
-            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.001, 4.7, 0.2, 0.08, 0, 0), true);
-            URclass_left.robotGoPos(new URCoordinate(0.300, -0.170, 0.001, 4.7, 0.2, 0.08, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -1.5, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, 0.150, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.370, -0.005, -0.070, 2.2, -2.16, -0.018, 60, 0), true);
-
-
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, -0.005, 0.120, 2, -2, -0.34, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 60, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.300, 0.120, 2, -2, -0.34, 0, 0), true);
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.465, 0.100, 0.120, 2, -2, -0.34, 0, 0), true);
-
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
         }
 
 
 
         private void button_settingFrom_Click(object sender, EventArgs e)
         {
+            motor1 = new MxMotor();
+
+            test = motor1.ReadMxPosition();
+
+            motor1.MxMotorSetPosition(initial_pos);
+            System.Threading.Thread.Sleep(1000);
+            motor1.MxMotorSetPosition(obj_pos);
+
             Form_PtSetting form_Pt = new Form_PtSetting();
             form_Pt.Show();
 
@@ -149,15 +231,11 @@ namespace multimodal
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void Start_Click(object sender, EventArgs e)
-        {
-            //URclass_left.ServerOn("192.168.1.102", 22);
-            //URclass_2g.ServerOn_2g("192.168.1.102", 21);
-
-
-
+        {    
             main_run();
         }
 
@@ -165,10 +243,14 @@ namespace multimodal
         void main_run()
         {
             clear_all();
-         //   cam_set.readSettings(MAXCAM);
+            motor1 = new MxMotor();
 
-            //URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
+            test = motor1.ReadMxPosition();
+         
+            motor1.MxMotorSetPosition(initial_pos);
 
+            //uRServerAction_right.Move(new float[] { -0.288F, 0.069F, 0.322F, 1.23F, -2.59F, -0.83F });
+            //   uRServerAction_left.Move(new float[] { 0.418F, -0.120F, 0.216F, 2.5F, 2.28F, 0.35F });
 
 
             read_py();
@@ -177,10 +259,6 @@ namespace multimodal
 
             timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
-
-
-            
-        //    System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_open);
         }
 
         void clear_all()
@@ -213,7 +291,7 @@ namespace multimodal
         void read_py()
         {
             //實體檔案名稱
-           // string fileName = string.Format("username.txt");
+            string fileName = string.Format("username.txt");
 
             //起一個Process執行Python程式
             Process pyProc = new Process();
@@ -237,8 +315,9 @@ namespace multimodal
             Console.ReadLine();
             pyProc.WaitForExit();
             pyProc.Close();
-        //    string user = System.IO.File.ReadAllText(fileName);
-            //  File.Delete(fileName);
+            string user = System.IO.File.ReadAllText(fileName);
+            textBox4.Text = user;
+            File.Delete(fileName);
         }
 
         static void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -257,15 +336,15 @@ namespace multimodal
 
         void Show_capture_open(object sender, EventArgs e)
         {
-            textBox2.Text = "Please place the number of cups you want.";
-            textBox5.Text = "(3 cups at most)";
+            textBox2.Text = "請放置杯子";
+            textBox5.Text = "";
             if (count == 0)
             {
                 timer.Enabled = true;
                 count++;
             }
 
-            else if (count >= 15)
+            else if (count >= 10)
             {
                 timer.Enabled = false;
                 cup_detect = true;
@@ -282,8 +361,8 @@ namespace multimodal
         {
           //  System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_open);
             count = 0;
-            textBox2.Text = "What kinds of drink do you want?";
-            textBox5.Text = "(1: Black Tea 2: Lemon Water 3: Leamon Tea)";
+            textBox2.Text = "請問您想喝哪種飲料?";
+            textBox5.Text = "(1): 紅茶 (2): 檸檬水 (3): 檸檬紅茶";
 
 
 
@@ -302,20 +381,25 @@ namespace multimodal
    
 
         private void button1_Click(object sender, EventArgs e)
-        {
-            // URclass_2g.ServerOn_2g("192.168.1.102", 21);
+        {            
+            //uRServerAction_right.Move(new float[] { -0.288F, 0.069F, 0.322F, 1.23F, -2.59F, -0.83F });
+            //uRServerAction_left.Move(new float[] { 0.418F, -0.120F, 0.216F, 2.5F, 2.28F, 0.35F });
 
-            URclass_2g.robotGoPos_2g(new URCoordinate_2g(-0.288, 0.069, 0.322, 1.23, -2.59, -0.83, 0, 0), true);
 
-            //mode_1 = false;
-            //mode_2 = false;
-            //  mode_3 = false;
 
-            cap = new Emgu.CV.VideoCapture(0);
-            gestureWrapper = new YoloWrapper("yolov2-tiny_number_test.cfg", "yolov2-tiny_number_90000.weights", "number.names");
+            mode_1 = false;
+            mode_2 = false;
+            //mode_3 = false;
 
-            System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_g);
+            drink_2 = true;
 
+            cap = new Emgu.CV.VideoCapture(0, VideoCapture.API.DShow);
+            //gestureWrapper = new YoloWrapper("yolov2-tiny_number_test.cfg", "yolov2-tiny_number_90000.weights", "number.names");
+
+            //System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_g);
+            objectWrapper = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+
+            System.Windows.Forms.Application.Idle += new EventHandler(Show_capture);
 
         }
 
@@ -344,30 +428,32 @@ namespace multimodal
             if (mode_1 == true)
             {
                 System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_g);
-                textBox2.Text = "Do you need sugar?";
-                textBox5.Text = "(1: Yes 2: No)";
+                //textBox2.Text = "Do you need sugar?";
+                //textBox5.Text = "(1: Yes 2: No)";
                 mode_1 = false;
+                motor1.MxMotorSetPosition(obj_pos);
+                System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_open);
+                //System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_g);
 
-                System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_g);
             }
             else if (mode_2 == true)
             {
-                if (cup_detect == false)
-                {
-                    System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_g);
-                    System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_open);
-                }
+                //if (cup_detect == false)
+                //{
+                //    System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_g);
+                //    System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_open);
+                //}
 
-                else
-                {
+                //else
+                //{
                     System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_open);
-                    textBox2.Text = "Detect the cups";
+                    textBox2.Text = "偵測杯子中";
                     textBox5.Text = "";
                     mode_2 = false;
                     objectWrapper = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
 
                     System.Windows.Forms.Application.Idle += new EventHandler(Show_capture);
-                }
+             //   }
                 
 
             }
@@ -375,19 +461,21 @@ namespace multimodal
             else if (mode_3 == true)
             {
                 System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture);
-                textBox2.Text = "Prepare your drink. Please wait a moment";
+                textBox2.Text = "準備您的飲料中，請稍後~";
                 mode_3 = false;
-                cam_set.readSettings(MAXCAM);
+                
 
                 if (cup_1 == true)
                 {
                     var c1x = cx1 + cw1 / 2;
-                    var c1y = cy1 + ch1 / 2;
+                    var c1y = cy1 + ch1;
 
-                    //cup_one = cam_set.I2W(c1x, c1y, OpenCamIndex);
+                    cup_one_f = cam_set_right.I2W(c1x, c1y, OpenCamIndex_right,true);
+                    cup_one[0] = cup_one_f[0] / 1000;
+                    cup_one[1] = cup_one_f[2] / 1000; 
 
-                    textBox2.Text = "Test";
-                   // URclass_2g.robotGoPos_2g(new URCoordinate_2g(cup_one.Y, 0.250, cup_one.X, 2.2, -2.2, 0, 0, 0), true);
+                    //textBox2.Text = "Test";
+                    
 
 
 
@@ -398,55 +486,70 @@ namespace multimodal
             }
             else if (mode_4 == true)
             {
-                cam_set.readSettings(MAXCAM);
+                
 
 
                 System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_b);
 
+
+
                 var prx = brx + brw / 2;
-                var pry = bry + brh / 2;
+                var pry = bry + brh;
 
+                var plx = blx + blw / 2;
+                var ply = bly + blh;
 
-
-            //    bottle_right = cam_set.I2W(prx, pry, OpenCamIndex);  //轉正後的世界座標
-
-
-                var pcx = bcx + bcw / 2;
-                var pcy = bcy + bch / 2;
-
-        //        bottle_center = cam_set.I2W(pcx, pcy, OpenCamIndex);   //轉正後的世界座標
 
 
                 mode_4 = false;
 
                 if (drink_1 == true)
                 {
+                    textBox2.Text = "紅茶";
 
-                    textBox2.Text = "Black Tea";
+                    float[] bottle_right_rf = cam_set_right.I2W(prx, pry, OpenCamIndex_right, true);  //轉正後的世界座標
+                    float[] bottle_right_r = { 0, 0 };
+                    bottle_right_r[0] = bottle_right_rf[0] / 1000;
+                    bottle_right_r[1] = bottle_right_rf[2] / 1000;
+
+                    float[] bottle_right_lf = cam_set_left.I2W(prx, pry, OpenCamIndex_left, true);
+                    float[] bottle_right_l = { 0, 0 };
+                    bottle_right_l[0] = bottle_right_lf[0] / 1000;
+                    bottle_right_l[1] = bottle_right_lf[2] / 1000;
+
+                    
+                    rotate_bottle(bottle_right_r, cup_one, bottle_right_l);
                 }
                 if (drink_2 == true)
                 {
-                    textBox2.Text = "Lemon Water";
+                    textBox2.Text = "檸檬水";
+
+                    float[] bottle_left_rf = cam_set_right.I2W(plx, ply, OpenCamIndex_right, true);  //轉正後的世界座標
+                    float[] bottle_left_r = { 0, 0 };
+                    bottle_left_r[0] = bottle_left_rf[0] / 1000;
+                    bottle_left_r[1] = bottle_left_rf[2] / 1000;
+
+                    float[] bottle_left_lf = cam_set_left.I2W(plx, ply, OpenCamIndex_left, true);
+                    float[] bottle_left_l = { 0, 0 };
+                    bottle_left_l[0] = bottle_left_lf[0] / 1000;
+                    bottle_left_l[1] = bottle_left_lf[2] / 1000;
+
+                    open_bottle(bottle_left_r, cup_one, bottle_left_l);
+
+
                 }
                 if (drink_3 == true)
                 {
-                    textBox2.Text = "Leamon Tea";
+                    textBox2.Text = "檸檬紅茶";
                 }
-                else
-                {
-                    textBox2.Text = "Test";
-                    URclass_2g.robotGoPos_2g(new URCoordinate_2g(bottle_right.Y, 0.250, bottle_right.X, 2.2, -2.2, 0, 0, 0), true);
-                }
+
+
+
+                
+
+                
             }
 
-
-            else
-            {
-                var plx = blx + blw / 2;
-                var ply = bly + blh / 2;
-
-        //        bottle_left = cam_set.I2W(plx, ply, OpenCamIndex);   //轉正後的點
-            }
         }
 
 
@@ -480,17 +583,17 @@ namespace multimodal
                 {
                     if (count1 >= 5)
                     {
-                        textBox1.Text = "Black Tea";
+                        textBox1.Text = "紅茶";
                         drink_1 = true;
                     }
                     else if (count2 >= 5)
                     {
-                        textBox1.Text = "Lemon Water";
+                        textBox1.Text = "檸檬水";
                         drink_2 = true;
                     }
                     else if (count3 >= 5)
                     {
-                        textBox1.Text = "Lemon Tea";
+                        textBox1.Text = "檸檬紅茶";
                         drink_3 = true;
                     }
 
@@ -531,61 +634,55 @@ namespace multimodal
                 }
             }
 
-            else
-            {
-                if (count1 >= 5 || count2 >= 5)
-                {
-                    if (count1 >= 5)
-                        textBox4.Text = "Yes";
-                    else if (count2 >= 5)
-                        textBox4.Text = "No";
+            //else
+            //{
+            //    if (count1 >= 5 || count2 >= 5)
+            //    {
+            //        if (count1 >= 5)
+            //            textBox4.Text = "Yes";
+            //        else if (count2 >= 5)
+            //            textBox4.Text = "No";
 
 
 
-                    if (count == 0)
-                    {
-                        timer.Enabled = true;
-                        count++;
-                    }
+            //        if (count == 0)
+            //        {
+            //            timer.Enabled = true;
+            //            count++;
+            //        }
 
-                    else if (count >= 5)
-                    {
-                        timer.Enabled = false;
-                        stop_run();
-                    }
+            //        else if (count >= 5)
+            //        {
+            //            timer.Enabled = false;
+            //            stop_run();
+            //        }
 
-                    else
-                        count++;
+            //        else
+            //            count++;
 
-                }
-                else
-                {
-                    foreach (YoloItem item in items1)
-                    {
-                        int confidence1 = (int)(item.Confidence * 100);
-                        rect1 = new System.Drawing.Rectangle(item.X, item.Y, item.Width, item.Height);
-                        CvInvoke.Rectangle(img1, rect1, new MCvScalar(65, 105, 255, 255), 3);
-                        CvInvoke.PutText(img1, item.Type + "  " + confidence1, new System.Drawing.Point(item.X, item.Y - 10), 0, 0.5, new MCvScalar(65, 105, 255, 255));
+            //    }
+            //    else
+            //    {
+            //        foreach (YoloItem item in items1)
+            //        {
+            //            int confidence1 = (int)(item.Confidence * 100);
+            //            rect1 = new System.Drawing.Rectangle(item.X, item.Y, item.Width, item.Height);
+            //            CvInvoke.Rectangle(img1, rect1, new MCvScalar(65, 105, 255, 255), 3);
+            //            CvInvoke.PutText(img1, item.Type + "  " + confidence1, new System.Drawing.Point(item.X, item.Y - 10), 0, 0.5, new MCvScalar(65, 105, 255, 255));
 
-                        if (item.Type == "one")
-                            count1++;
-                        else if (item.Type == "two")
-                            count2++;
+            //            if (item.Type == "one")
+            //                count1++;
+            //            else if (item.Type == "two")
+            //                count2++;
 
 
-                    }
-                }
-            }
+            //        }
+            //    }
+            //}
 
             imageBox1.Image = img1;
             
         }
-
-
-
-
-    
-
 
         void Show_capture(object sender, EventArgs e)
         {
@@ -711,7 +808,7 @@ namespace multimodal
             cap_img.Dispose();
             cap_img = null;
 
-             if (count<3)
+             if (count<2)
             {
                 foreach (YoloItem item in items2)
                 {
@@ -794,7 +891,9 @@ namespace multimodal
             else
             {
                 textBox2.Text = "Done";
-                int[] array = new int[] { by1, by2, by3 };
+
+
+                int[] array = new int[] { by1, by2 };
                 var max = array.Max();
                 var min = array.Min();
 
@@ -805,95 +904,25 @@ namespace multimodal
                     brw = bw1;
                     brh = bh1;
 
-                    if (min == by2)
-                    {
-                        blx = bx2;
-                        bly = by2;
-                        blw = bw2;
-                        blh = bh2;
-
-                        bcx = bx3;
-                        bcy = by3;
-                        bcw = bw3;
-                        bch = bh3;
-                    }
-                    else
-                    {
-                        blx = bx3;
-                        bly = by3;
-                        blw = bw3;
-                        blh = bh3;
-
-                        bcx = bx2;
-                        bcy = by2;
-                        bcw = bw2;
-                        bch = bh2;
-                    }
+                    blx = bx2;
+                    bly = by2;
+                    blw = bw2;
+                    blh = bh2;
                 }
-                else if (max == by2)
+                else 
                 {
                     brx = bx2;
                     bry = by2;
                     brw = bw2;
                     brh = bh2;
-                    if (min == by1)
-                    {
-                        blx = bx1;
-                        bly = by1;
-                        blw = bw1;
-                        blh = bh1;
 
-                        bcx = bx3;
-                        bcy = by3;
-                        bcw = bw3;
-                        bch = bh3;
-                    }
-                    else
-                    {
-                        blx = bx3;
-                        bly = by3;
-                        blw = bw3;
-                        blh = bh3;
-
-                        bcx = bx1;
-                        bcy = by1;
-                        bcw = bw1;
-                        bch = bh1;
-                    }
+                    blx = bx1;
+                    bly = by1;
+                    blw = bw1;
+                    blh = bh1;
 
                 }
-                else
-                {
-                    brx = bx3;
-                    bry = by3;
-                    brw = bw3;
-                    brh = bh3;
 
-                    if (min == by1)
-                    {
-                        blx = bx1;
-                        bly = by1;
-                        blw = bw1;
-                        blh = bh1;
-
-                        bcx = bx2;
-                        bcy = by2;
-                        bcw = bw2;
-                        bch = bh2;
-                    }
-                    else
-                    {
-                        blx = bx2;
-                        bly = by2;
-                        blw = bw2;
-                        blh = bh2;
-
-                        bcx = bx1;
-                        bcy = by1;
-                        bcw = bw1;
-                        bch = bh1;
-                    }
-                }
 
 
 
@@ -906,5 +935,129 @@ namespace multimodal
 
             imageBox1.Image = img1;
         }
+
+        void rotate_bottle(float [] bottle_r, float [] cup_r, float [] bottle_l)
+        {
+            textBox2.Text = "Test";
+            if (uRServerAction_right == null)
+            {
+                throw new DriveNotFoundException("完蛋了。");
+            }
+
+            uRServerAction_left.GripperOpen();
+            uRServerAction_right.GripperOpen();
+            uRServerAction_right.Move(robot_initial_pos_r);
+            uRServerAction_left.Move(robot_initial_pos_l);
+
+            uRServerAction_left.GripperClose();
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x, 0.04F, bottle_l[1]+image_left_y-0.04F, 2.4F, 2.5F, 1.5F });
+
+            uRServerAction_left.ForceMode(0, 30);
+
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.250F, bottle_r[1] + image_right_y + 0.02F, 2.174F, -2.233F, 0.002F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.250F, bottle_r[1] + image_right_y, 2.174F, -2.233F, 0.002F });
+            Thread.Sleep(2000);
+
+            uRServerAction_left.EndForceMode();
+            uRServerAction_left.Move(robot_initial_pos_l);
+            uRServerAction_left.GripperOpen();
+
+           
+            uRServerAction_right.GripperClose();
+
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.110F, bottle_r[1] + image_right_y, 2.174F, -2.233F, 0.002F });
+            uRServerAction_right.Move(robot_initial_pos_rc);
+
+            Thread.Sleep(2000);
+            robot_initial_pos_lc[1] -= 0.02F;
+            uRServerAction_left.Move(robot_initial_pos_lc);
+            robot_initial_pos_lc[1] += 0.02F;
+            uRServerAction_left.Move(robot_initial_pos_lc);
+            Thread.Sleep(1000);
+
+
+            uRServerAction_left.TurnJoint(4, -15, 2);
+            Thread.Sleep(2000);
+
+            uRServerAction_left.Move(robot_initial_pos_lc);
+
+            uRServerAction_left.GripperClose();
+
+            robot_initial_pos_lc[1] -= 0.020F;
+
+            uRServerAction_left.Move(robot_initial_pos_lc);
+
+            Thread.Sleep(2000);
+
+            uRServerAction_right.Move(new float[] { cup_r[0] - 0.150F, 0.110F, cup_r[1] + 0.050F, 2.26F, -2.27F, -0.06F });
+            uRServerAction_right.Move(new float[] { cup_r[0] - 0.150F, 0.180F, cup_r[1] + 0.050F, 2.26F, -2.27F, -0.06F });
+
+            uRServerAction_right.MoveJoint(5, -1.5F);
+            Thread.Sleep(5000);
+            uRServerAction_right.MoveJoint(5, 1.5F);
+
+
+            uRServerAction_right.Move(robot_initial_pos_rc);
+            Thread.Sleep(2000);
+
+            robot_initial_pos_lc[1] += 0.020F;
+            uRServerAction_left.Move(robot_initial_pos_lc);
+            uRServerAction_left.GripperOpen();
+
+            Thread.Sleep(2000);
+
+            robot_initial_pos_lc[1] -= 0.003F;
+            uRServerAction_left.Move(robot_initial_pos_lc);
+
+            uRServerAction_left.GripperClose();
+            uRServerAction_left.ForceMode(2, 10);
+            uRServerAction_left.MoveJoint(5, -3.1416F);
+            uRServerAction_left.EndForceMode();
+            uRServerAction_left.GripperOpen();
+            uRServerAction_left.MoveJoint(5, 3.1416F);
+            uRServerAction_left.GripperClose();
+            uRServerAction_left.ForceMode(2, 10);
+            uRServerAction_left.MoveJoint(5, -3.1416F);
+            uRServerAction_left.EndForceMode();
+
+            uRServerAction_left.GripperOpen();
+
+
+            //uRServerAction_left.MoveJoint(5, 3.1416F);
+            //uRServerAction_left.GripperClose();
+
+            //uRServerAction_right.ForceMode(0,6);
+            uRServerAction_left.TurnJoint(-4, 25, 2);
+            // uRServerAction_right.EndForceMode();
+
+            robot_initial_pos_lc[1] -= 0.02F;
+            uRServerAction_left.Move(robot_initial_pos_lc);
+
+            uRServerAction_left.Move(robot_initial_pos_l);
+
+
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.242F, bottle_r[1] + image_right_y, 2.26F, -2.27F, -0.06F });
+            uRServerAction_right.GripperOpen();
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.242F, bottle_r[1] + image_right_y + 0.03F, 2.26F, -2.27F, -0.06F });
+
+            uRServerAction_right.Move(robot_initial_pos_r);
+
+        }
+
+
+
+        void open_bottle(float[] bottle_r, float[] cup_r, float[] bottle_l)
+        {
+            uRServerAction_left.GripperOpen();
+            uRServerAction_right.GripperOpen();
+            uRServerAction_right.Move(robot_initial_pos_r);
+            uRServerAction_left.Move(robot_initial_pos_l);
+
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.081F, bottle_r[1] + image_right_y, 2.35F, -2.4F, -0.83F });
+
+
+        }
     }
+
+
 }

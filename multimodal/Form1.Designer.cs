@@ -55,14 +55,14 @@
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(210, 121);
             this.Start.TabIndex = 0;
-            this.Start.Text = "Start";
+            this.Start.Text = "開始";
             this.Start.UseVisualStyleBackColor = false;
             this.Start.Click += new System.EventHandler(this.Start_Click);
             // 
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(15, 253);
+            this.textBox1.Location = new System.Drawing.Point(15, 416);
             this.textBox1.Margin = new System.Windows.Forms.Padding(6);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
@@ -75,7 +75,7 @@
             this.imageBox1.Location = new System.Drawing.Point(330, 189);
             this.imageBox1.Margin = new System.Windows.Forms.Padding(6);
             this.imageBox1.Name = "imageBox1";
-            this.imageBox1.Size = new System.Drawing.Size(968, 652);
+            this.imageBox1.Size = new System.Drawing.Size(933, 457);
             this.imageBox1.TabIndex = 2;
             this.imageBox1.TabStop = false;
             // 
@@ -86,19 +86,19 @@
             this.textBox2.Location = new System.Drawing.Point(330, 38);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(968, 60);
+            this.textBox2.Size = new System.Drawing.Size(933, 60);
             this.textBox2.TabIndex = 3;
             // 
             // drink
             // 
             this.drink.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.drink.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.drink.Location = new System.Drawing.Point(15, 189);
+            this.drink.Location = new System.Drawing.Point(15, 349);
             this.drink.Multiline = true;
             this.drink.Name = "drink";
             this.drink.Size = new System.Drawing.Size(262, 47);
             this.drink.TabIndex = 4;
-            this.drink.Text = "Drink";
+            this.drink.Text = "飲品";
             this.drink.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.drink.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
@@ -106,18 +106,19 @@
             // 
             this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(15, 341);
+            this.textBox3.Location = new System.Drawing.Point(15, 189);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(262, 47);
             this.textBox3.TabIndex = 5;
-            this.textBox3.Text = "Sugar";
+            this.textBox3.Text = "名字";
             this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged_1);
             // 
             // textBox4
             // 
             this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(15, 409);
+            this.textBox4.Location = new System.Drawing.Point(15, 260);
             this.textBox4.Margin = new System.Windows.Forms.Padding(6);
             this.textBox4.Multiline = true;
             this.textBox4.Name = "textBox4";
@@ -132,7 +133,7 @@
             this.textBox5.Location = new System.Drawing.Point(330, 99);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(968, 60);
+            this.textBox5.Size = new System.Drawing.Size(933, 60);
             this.textBox5.TabIndex = 7;
             // 
             // textBox6
@@ -144,7 +145,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(262, 47);
             this.textBox6.TabIndex = 8;
-            this.textBox6.Text = "Number";
+            this.textBox6.Text = "數量";
             this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox7
@@ -203,7 +204,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.ClientSize = new System.Drawing.Size(1310, 749);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button_settingFrom);
@@ -222,6 +223,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
