@@ -43,6 +43,7 @@
             this.button_settingFrom = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.Mipy = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +54,7 @@
             this.Start.Location = new System.Drawing.Point(47, 38);
             this.Start.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.Start.Name = "Start";
-            this.Start.Size = new System.Drawing.Size(210, 121);
+            this.Start.Size = new System.Drawing.Size(210, 83);
             this.Start.TabIndex = 0;
             this.Start.Text = "開始";
             this.Start.UseVisualStyleBackColor = false;
@@ -199,12 +200,25 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // Mipy
+            // 
+            this.Mipy.AutoSize = true;
+            this.Mipy.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Mipy.Location = new System.Drawing.Point(98, 130);
+            this.Mipy.Name = "Mipy";
+            this.Mipy.Size = new System.Drawing.Size(96, 37);
+            this.Mipy.TabIndex = 14;
+            this.Mipy.Text = "Mipy";
+            this.Mipy.UseVisualStyleBackColor = true;
+            this.Mipy.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.ClientSize = new System.Drawing.Size(1310, 749);
+            this.Controls.Add(this.Mipy);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button_settingFrom);
@@ -246,6 +260,7 @@
         private System.Windows.Forms.Button button_settingFrom;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.CheckBox Mipy;
     }
 }
 
