@@ -62,7 +62,7 @@ namespace multimodal
         ///////////////////////////////////////////////
 
         SocketTool mipy_socket;
-        MxMotor motor1;
+        MxMotor motor1 = new MxMotor();
         int test;
         int initial_pos = 2020;
         int obj_pos = 1350;
@@ -214,20 +214,6 @@ namespace multimodal
             }
             Console.WriteLine("Connected!");
             uRServerAction_left = new URServerAction(stream_l);
-
-           // uRServerAction_left.Move(robot_initial_pos_l);
-
-
-
-            //uRServerAction.FreeDrive(10000);           
-            //uRServerAction.TurnJoint(3);
-            //uRServerAction.MoveJoint(0, -0.5F);
-
-
-            //uRServerAction_right.ForceMode(0, 10);
-            //Thread.Sleep(5000);
-            //uRServerAction_right.EndForceMode();
-            //Console.WriteLine("***end");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -275,7 +261,7 @@ namespace multimodal
 
         private void button_settingFrom_Click(object sender, EventArgs e)
         {
-            motor1 = new MxMotor();
+            //motor1 = new MxMotor();
 
             test = motor1.ReadMxPosition();
 
@@ -301,7 +287,7 @@ namespace multimodal
         private void Start_Click(object sender, EventArgs e)
         {
 
-            motor1 = new MxMotor();                    
+            //motor1 = new MxMotor();                    
             main_run();
         }
 
@@ -410,7 +396,7 @@ namespace multimodal
         void read_py()
         {
             //實體檔案名稱
-            string fileName = string.Format("username.txt");
+            string fileName = "username.txt";
 
             //起一個Process執行Python程式
             Process pyProc = new Process();
@@ -436,7 +422,7 @@ namespace multimodal
             pyProc.Close();
             string user = System.IO.File.ReadAllText(fileName);
             textBox4.Text = user;
-            File.Delete(fileName);
+            //File.Delete(fileName);
         }
 
         static void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -500,11 +486,11 @@ namespace multimodal
    
 
         private void button1_Click(object sender, EventArgs e)
-        {            
+        {
             //uRServerAction_right.Move(new float[] { -0.288F, 0.069F, 0.322F, 1.23F, -2.59F, -0.83F });
             //uRServerAction_left.Move(new float[] { 0.418F, -0.120F, 0.216F, 2.5F, 2.28F, 0.35F });
 
-
+            clear_all();
 
             mode_1 = false;
             mode_2 = false;
@@ -596,14 +582,8 @@ namespace multimodal
 
             }
             else if (mode_4 == true)
-            {
-                
-
-
+            {              
                 System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture_b);
-
-
-
                 var prx = brx + brw / 2;
                 var pry = bry + brh;
 
@@ -646,8 +626,6 @@ namespace multimodal
                 //bottle_center_l[0] = bottle_center_lf[0] / 1000;
                 //bottle_center_l[1] = bottle_center_lf[2] / 1000;
 
-
-
                 if (drink_1 == true)
                 {
                     textBox2.Text = "左邊瓶子";
@@ -664,7 +642,7 @@ namespace multimodal
                     mode_4 = false;
 
                     pick_bottle(bottle_left_l, cup_one_l);
-                    //open_bottle(bottle_center_r, cup_one_r, cup_one_l, bottle_center_l);
+                    //open_bottle(bottle_left_r, cup_one_r, cup_one_l, bottle_left_l);
 
                 }
                 else if (drink_3 == true)
@@ -721,9 +699,13 @@ namespace multimodal
             }
 
             else if (mode_4 == false)
-            {
+            {               
+                textBox2.Text = "您的飲料已經準備好了，請拿取，謝謝~";
+              //  pick_cup(cup_one_r,cup_one_l);
+
                 cap.Stop();
-                textBox2.Text = "您的飲料已經準備好了，請自行拿取，謝謝~";
+                cap.Dispose();
+
             }
 
         }
@@ -1166,7 +1148,7 @@ namespace multimodal
             uRServerAction_left.GripperCloseForceMIN();
 
             uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x, 0.01F, bottle_l[1] + image_left_y - 0.04F, 2.4F, 2.5F, 1.5F });
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x, 0.04F, bottle_l[1]+image_left_y-0.04F, 2.4F, 2.5F, 1.5F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x, 0.04F, bottle_l[1] + image_left_y - 0.04F, 2.4F, 2.5F, 1.5F });
 
             uRServerAction_left.ForceMode(0, 30);
 
@@ -1179,7 +1161,7 @@ namespace multimodal
             uRServerAction_left.Move(robot_initial_pos_l);
             uRServerAction_left.GripperOpen();
 
-           
+
             uRServerAction_right.GripperCloseForceMAX();
 
             uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.110F, bottle_r[1] + image_right_y, 2.174F, -2.233F, 0.002F });
@@ -1207,8 +1189,8 @@ namespace multimodal
 
             Thread.Sleep(2000);
 
-            uRServerAction_right.Move(new float[] { cup_r[0] , 0.110F, cup_r[1] + 0.040F, 2.26F, -2.27F, -0.06F });
-            uRServerAction_right.Move(new float[] { cup_r[0] , 0.180F, cup_r[1] + 0.040F, 2.26F, -2.27F, -0.06F });
+            uRServerAction_right.Move(new float[] { cup_r[0], 0.110F, cup_r[1] + 0.040F, 2.26F, -2.27F, -0.06F });
+            uRServerAction_right.Move(new float[] { cup_r[0], 0.180F, cup_r[1] + 0.040F, 2.26F, -2.27F, -0.06F });
 
             uRServerAction_right.MoveJoint(5, 1.75F);
             Thread.Sleep(3000);
@@ -1227,34 +1209,17 @@ namespace multimodal
             robot_initial_pos_lc[1] -= 0.01F;
             uRServerAction_left.Move(robot_initial_pos_lc);
 
-            //uRServerAction_left.GripperClose();
-            //uRServerAction_left.ForceMode(2, 10);
-            //uRServerAction_left.MoveJoint(5, -3.1416F);
-            //uRServerAction_left.EndForceMode();
-            //uRServerAction_left.GripperOpen();
-            //uRServerAction_left.MoveJoint(5, 3.1416F);
-            //uRServerAction_left.GripperClose();
-            //uRServerAction_left.ForceMode(2, 10);
-            //uRServerAction_left.MoveJoint(5, -3.1416F);
-            //uRServerAction_left.EndForceMode();
-            //uRServerAction_left.GripperOpen();
-            //uRServerAction_left.MoveJoint(5, 3.1416F);
-            //uRServerAction_left.GripperClose();
-
-            //uRServerAction_right.ForceMode(0,6);
             uRServerAction_left.TurnJoint(-4, 25, 2);
-            // uRServerAction_right.EndForceMode();
+            
             Thread.Sleep(5000);
             robot_initial_pos_rc[1] += 0.02F;
             uRServerAction_right.Move(robot_initial_pos_rc);
-            //robot_initial_pos_lc[1] -= 0.02F;
-            //uRServerAction_left.Move(robot_initial_pos_lc);
             Thread.Sleep(2000);
 
             uRServerAction_left.Move(robot_initial_pos_l);
 
             uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.100F, bottle_r[1] + image_right_y, 2.26F, -2.27F, -0.06F });
-            
+
             uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.242F, bottle_r[1] + image_right_y, 2.26F, -2.27F, -0.06F });
             uRServerAction_right.GripperOpen();
             uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x, 0.242F, bottle_r[1] + image_right_y + 0.03F, 2.26F, -2.27F, -0.06F });
@@ -1274,14 +1239,14 @@ namespace multimodal
             uRServerAction_left.Move(robot_initial_pos_l);
 
 
-            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x - 0.01F, 0.077F, bottle_r[1] + image_right_y + 0.050F, 2.37F, -2.54F, -1.07F });
-            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x - 0.01F, 0.077F, bottle_r[1] + image_right_y + 0.015F, 2.37F, -2.54F, -1.07F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x , 0.09F, bottle_r[1] + image_right_y + 0.050F, 2.37F, -2.54F, -1.07F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + image_right_x , 0.09F, bottle_r[1] + image_right_y + 0.015F, 2.37F, -2.54F, -1.07F });
 
             uRServerAction_right.GripperCloseForceMAX();
             Thread.Sleep(1000);
 
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.018F, 0.210F, bottle_l[1] + image_left_y + 0.02F, 0.06F, -3.127F, 0.093F });
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.018F, 0.210F, bottle_l[1] + image_left_y - 0.01F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x , 0.220F, bottle_l[1] + image_left_y + 0.02F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x , 0.220F, bottle_l[1] + image_left_y - 0.01F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.GripperCloseForceMAX();
             Thread.Sleep(2000);
 
@@ -1291,29 +1256,29 @@ namespace multimodal
             uRServerAction_right.Move(robot_initial_pos_r);
             Thread.Sleep(2000);
 
-            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x + 0.1F, 0.150F, cup_l[1] + image_left_y, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x - 0.08F, 0.200F, cup_l[1] + image_left_y, 0.06F, -3.127F, 0.093F });
 
-            uRServerAction_left.MoveJoint(5, 1.5F);
-            Thread.Sleep(5000);
             uRServerAction_left.MoveJoint(5, -1.5F);
+            Thread.Sleep(5000);
+            uRServerAction_left.MoveJoint(5, 1.5F);
 
 
 
             uRServerAction_right.GripperCloseForceMIN();
-            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x - 0.180F, 0.115F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
-            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x - 0.180F, 0.055F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
-            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x - 0.100F, 0.055F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x + 0.180F, 0.165F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x + 0.180F, 0.105F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x + 0.100F, 0.105F, cup_r[1] + image_right_y + 0.035F, 2.21F, -2.21F, -0.035F });
 
-            uRServerAction_right.ForceMode(0, -15);
+            uRServerAction_right.ForceMode(0, -25);
             Thread.Sleep(2000);
             uRServerAction_right.EndForceMode();
-            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x - 0.100F, 0.055F, cup_r[1] + image_right_y + 0.06F, 2.21F, -2.21F, -0.035F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x + 0.100F, 0.105F, cup_r[1] + image_right_y + 0.06F, 2.21F, -2.21F, -0.035F });
             uRServerAction_right.Move(robot_initial_pos_r);
             uRServerAction_right.GripperOpen();
 
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.018F, 0.210F, bottle_l[1] + image_left_y - 0.01F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x  , 0.220F, bottle_l[1] + image_left_y - 0.01F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.GripperOpen();
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.018F, 0.210F, bottle_l[1] + image_left_y + 0.02F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x  , 0.220F, bottle_l[1] + image_left_y + 0.02F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.Move(robot_initial_pos_l);
 
             move_2 = true;
@@ -1330,27 +1295,27 @@ namespace multimodal
             uRServerAction_right.Move(robot_initial_pos_r);
             uRServerAction_left.Move(robot_initial_pos_l);
 
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x , 0.250F, bottle_l[1] + image_left_y + 0.01F, 0.06F, -3.127F, 0.093F });
-            uRServerAction_left.Move(new float[] { bottle_l[0]+image_left_x , 0.250F, bottle_l[1]+ image_left_y-0.04F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.002F, 0.250F, bottle_l[1] + image_left_y + 0.01F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.002F, 0.250F, bottle_l[1] + image_left_y - 0.04F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.GripperCloseForceMIN();
             Thread.Sleep(1000);
-            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x - 0.08F, 0.190F, cup_l[1] + image_left_y-0.02F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x - 0.08F, 0.190F, cup_l[1] + image_left_y - 0.016F, 0.06F, -3.127F, 0.093F });
 
             uRServerAction_left.MoveJoint(5, -1.5F);
-            if(drink_2 ==true)
+            if (drink_2 == true)
             {
                 Thread.Sleep(700);
             }
             else if (drink_3 == true)
             {
-              //  Thread.Sleep(100);
+                //  Thread.Sleep(100);
             }
-            
+
             uRServerAction_left.MoveJoint(5, 1.5F);
 
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x, 0.250F, bottle_l[1] + image_left_y - 0.04F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.002F, 0.250F, bottle_l[1] + image_left_y - 0.04F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.GripperOpen();
-            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x , 0.250F, bottle_l[1] + image_left_y + 0.01F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { bottle_l[0] + image_left_x + 0.002F, 0.250F, bottle_l[1] + image_left_y + 0.01F, 0.06F, -3.127F, 0.093F });
 
             uRServerAction_left.Move(robot_initial_pos_l);
 
@@ -1358,7 +1323,34 @@ namespace multimodal
             stop_run();
         }
 
+        void pick_cup(float[] cup_r, float[] cup_l)
+        {
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x+0.027F, 0.200F, cup_r[1] + 0.045F, 2.1F, -2.1F, -0.38F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x+0.027F, 0.275F, cup_r[1] + 0.045F, 2.1F, -2.1F, -0.38F });
+            uRServerAction_right.GripperCloseForceMIN();
 
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x+0.027F, 0.050F, cup_r[1] + 0.045F, 2.1F, -2.1F, -0.38F });
+            uRServerAction_left.GripperCloseForceMIN();
+            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x - 0.02F, 0.150F, cup_l[1] + image_left_y, 0.071F, 2.94F, -0.067F});
+            uRServerAction_left.Move(new float[] { cup_l[0] + image_left_x - 0.02F, 0.135F, cup_l[1] + image_left_y, 0.071F, 2.94F, -0.067F });
+            Thread.Sleep(1000);
+
+
+            uRServerAction_right.Move(new float[] {-0.500F,0.050F,-0.085F,2.1F,-2.1F,-0.38F });
+            uRServerAction_left.Move(new float[] { 0.490F, 0.135F, -0.045F, 0.012F, -3.54F, 0.038F });
+            Thread.Sleep(3000);
+
+            uRServerAction_left.Move(new float[] { 0.500F, 0.135F, 0.050F, 0.0126F, 2.742F, -0.045F });
+            uRServerAction_left.Move(robot_initial_pos_l);
+            uRServerAction_left.GripperOpen();
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x+0.027F, 0.275F, cup_r[1] + 0.045F, 2.1F, -2.1F, -0.38F });
+            Thread.Sleep(500);
+            uRServerAction_right.GripperOpen();
+            uRServerAction_right.Move(new float[] { cup_r[0] + image_right_x + 0.027F, 0.2F, cup_r[1] + 0.045F, 2.1F, -2.1F, -0.38F });
+            uRServerAction_right.Move(robot_initial_pos_r);
+
+
+        }
     }
 
 
