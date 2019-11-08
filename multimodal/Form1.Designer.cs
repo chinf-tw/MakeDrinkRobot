@@ -204,7 +204,7 @@
             // 
             this.Mipy.AutoSize = true;
             this.Mipy.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Mipy.Location = new System.Drawing.Point(98, 130);
+            this.Mipy.Location = new System.Drawing.Point(103, 130);
             this.Mipy.Name = "Mipy";
             this.Mipy.Size = new System.Drawing.Size(96, 37);
             this.Mipy.TabIndex = 14;
