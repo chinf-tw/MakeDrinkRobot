@@ -94,7 +94,7 @@ namespace multimodal
 
 
             ///////////////////////////////////////////////////////////////////////////////////////////
-            
+
 
             robotMakeDrinkControl = new RobotMakeDrinkControl(uRServerAction_left, uRServerAction_right);
         }
@@ -106,9 +106,10 @@ namespace multimodal
         int initial_pos = 2020;
         int obj_pos = 1350;
 
-
+        
         YoloWrapper gestureWrapper;
-        YoloWrapper objectWrapper;
+        YoloWrapper objectWrapper_side;
+        YoloWrapper objectWrapper_top;
 
         IEnumerable<YoloItem> items1;
         IEnumerable<YoloItem> items2;
@@ -275,11 +276,11 @@ namespace multimodal
             mode_1 = false;
             mode_2 = false;
             //mode_3 = false;
-            drink_1 = true;
+            drink_2 = true;
 
-            cap = new Emgu.CV.VideoCapture(0, VideoCapture.API.DShow);
+            cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
 
-            objectWrapper = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+            objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
 
             System.Windows.Forms.Application.Idle += new EventHandler(Show_capture);
 
@@ -315,11 +316,6 @@ namespace multimodal
             timer.Interval = 1000;
 
             motor1.MxMotorSetPosition(initial_pos);
-
-            //uRServerAction_left.GripperOpen();
-            //uRServerAction_right.GripperOpen();
-            //uRServerAction_right.Move(robot_initial_pos_r);
-            //uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
 
             if (Mipy.Checked)
             {
@@ -482,12 +478,11 @@ namespace multimodal
             textBox2.Text = "請問您想喝哪種飲料?";
             textBox5.Text = "(1):" + DrinkName.first_drink_name + "   (2):" + DrinkName.second_drink_name + "   (3):" + DrinkName.gradual_name;
 
-            cap = new Emgu.CV.VideoCapture(0, VideoCapture.API.DShow);
+            cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
             gestureWrapper = new YoloWrapper("yolov2-tiny_number_test.cfg", "yolov2-tiny_number_90000.weights", "number.names");
 
             System.Windows.Forms.Application.Idle += new EventHandler(Show_capture_g);
         }
-
 
 
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -538,8 +533,8 @@ namespace multimodal
                 textBox2.Text = "偵測杯子中";
                 textBox5.Text = "";
                 mode_2 = false;
-                objectWrapper = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
-
+                objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+                
                 System.Windows.Forms.Application.Idle += new EventHandler(Show_capture);
 
             }
@@ -674,7 +669,7 @@ namespace multimodal
             else if (mode_4 == false)
             {
                 textBox2.Text = "您的飲料已經準備好了，請拿取，謝謝~";
-                //pick_cup(cup_one_r,cup_one_l);
+                robotMakeDrinkControl.pick_cup(cup_one_r,cup_one_l);
 
                 cap.Stop();
                 cap.Dispose();
@@ -837,12 +832,15 @@ namespace multimodal
 
             Image<Bgr, Byte> imageCV1 = new Image<Bgr, byte>(cap_img);
             Mat img1 = imageCV1.Mat;
-
-
+            Mat img1_2  = new Mat ();
+            img1.CopyTo(img1_2);
+           //Size A = new Size(416, 416);
+           // CvInvoke.Resize(img1_2, img1_2,A);
+;
             imageBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-            byte[] img2 = BmpToBytes(cap_img);
-            items2 = objectWrapper.Detect(img2);
+            byte[] img2 = BmpToBytes(img1_2.Bitmap);
+            items2 = objectWrapper_side.Detect(img2);
             cap_img.Dispose();
             cap_img = null;
 
@@ -857,7 +855,7 @@ namespace multimodal
                     {
 
 
-                        if (item.Type == "bowl" || item.Type == "cup")
+                        if (item.Type == "cup" || item.Type == "bowl")
                         {
                             int confidence1 = (int)(item.Confidence * 100);
                             rect1 = new System.Drawing.Rectangle(item.X, item.Y, item.Width, item.Height);
@@ -937,7 +935,7 @@ namespace multimodal
 
 
 
-            imageBox1.Image = img1;
+            imageBox1.Image = img1_2;
         }
         void Show_capture_b(object sender, EventArgs e)
         {
@@ -949,7 +947,7 @@ namespace multimodal
             imageBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
             byte[] img2 = BmpToBytes(cap_img);
-            items2 = objectWrapper.Detect(img2);
+            items2 = objectWrapper_side.Detect(img2);
             cap_img.Dispose();
             cap_img = null;
 

@@ -10,8 +10,8 @@ namespace multimodal
     {
         public static readonly float[] robot_initial_pos_r = { -0.288F, 0.069F, 0.322F, 1.23F, -2.59F, -0.83F };
         public static readonly float[] robot_initial_pos_l = { 0.395F, 0.030F, 0.172F, 0.86F, 3.19F, 0.76F };
-        public static readonly float[] robot_initial_pos_rc = { -0.337F, 0.110F, -0.123F, 2.174F, -2.233F, 0.002F };
-        public static readonly float[] robot_initial_pos_lc = { 0.335F, -0.100F, -0.153F, 2.447F, 2.367F, 2.475F };
+        public static readonly float[] robot_initial_pos_rc = { -0.337F, 0.110F, -0.123F, 0.015F, 3.18F, 0.04F };
+        public static readonly float[] robot_initial_pos_lc = { 0.33741F, -0.115F, -0.15771F, 2.4417F, 2.4450F, 2.4140F };
     }
     public class ImagePosition
     {
