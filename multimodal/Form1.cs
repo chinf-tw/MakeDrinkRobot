@@ -32,7 +32,9 @@ using Emgu.CV.Util;
 using Emgu.CV.CvEnum;
 
 using PerspectiveTransformSetting;
-using URControler2;
+// CHINF 的類別庫
+//using URControler2;
+using CIRLABURControl;
 
 
 
@@ -104,7 +106,7 @@ namespace multimodal
         MxMotor motor1 = new MxMotor();
         int test;
         int initial_pos = 2020;
-        int obj_pos = 1350;
+        int obj_pos = 1385;
 
         
         YoloWrapper gestureWrapper;
@@ -231,7 +233,7 @@ namespace multimodal
 
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
 
-            uRServerAction_left.GripperCloseForceMIN();
+            uRServerAction_left.GripperCloseMAX();
 
             RobotInitial.robot_initial_pos_lc[1] -= 0.020F;
 
@@ -276,7 +278,7 @@ namespace multimodal
             mode_1 = false;
             mode_2 = false;
             //mode_3 = false;
-            drink_2 = true;
+            drink_1 = true;
 
             cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
 
@@ -669,7 +671,7 @@ namespace multimodal
             else if (mode_4 == false)
             {
                 textBox2.Text = "您的飲料已經準備好了，請拿取，謝謝~";
-                robotMakeDrinkControl.pick_cup(cup_one_r,cup_one_l);
+              //  robotMakeDrinkControl.pick_cup(cup_one_r,cup_one_l);
 
                 cap.Stop();
                 cap.Dispose();

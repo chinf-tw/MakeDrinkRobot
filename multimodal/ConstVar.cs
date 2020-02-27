@@ -15,8 +15,8 @@ namespace multimodal
     }
     public class ImagePosition
     {
-        public static readonly float image_right_x = -0.065F;
-        public static readonly float image_right_y = 0.01F;
+        public static readonly float image_right_x = -0.045F;
+        public static readonly float image_right_y = -0.01F;
         public static readonly float image_left_x = 0.05F;
         public static readonly float image_left_y = 0.04F;
     }

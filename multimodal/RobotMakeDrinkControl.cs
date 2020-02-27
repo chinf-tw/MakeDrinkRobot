@@ -1,5 +1,7 @@
-﻿using URControler2;
-using System.Threading;
+﻿using System.Threading;
+
+//using URControler2;
+using CIRLABURControl;
 
 namespace multimodal
 {
@@ -32,7 +34,7 @@ namespace multimodal
             //uRServerAction_left.ForceMode(0, 30);
 
             uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.250F, bottle_r[1] + ImagePosition.image_right_y + 0.04F, 0.015F, 3.18F, 0.04F });
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.250F, bottle_r[1] + ImagePosition.image_right_y, 0.015F,3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.250F, bottle_r[1] + ImagePosition.image_right_y+0.01F, 0.015F,3.18F, 0.04F });
             //Thread.Sleep(2000);
 
             //uRServerAction_left.EndForceMode();
@@ -41,35 +43,31 @@ namespace multimodal
             //uRServerAction_left.GripperOpen();
 
 
-            uRServerAction_right.GripperCloseForceMIN();
+            uRServerAction_right.GripperClose();
 
             uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.110F, bottle_r[1] + ImagePosition.image_right_y, 0.015F, 3.18F, 0.04F });
             uRServerAction_right.Move(new float[] { RobotInitial.robot_initial_pos_rc[0], 0.110F, bottle_r[1] + ImagePosition.image_right_y, 0.015F, 3.18F, 0.04F });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_rc);
 
-            Thread.Sleep(2000);
             RobotInitial.robot_initial_pos_lc[1] -= 0.02F;
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
             RobotInitial.robot_initial_pos_lc[1] += 0.02F;
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-            Thread.Sleep(1000);
+
 
 
             uRServerAction_left.TurnJoint(4, -15, 2);
-            Thread.Sleep(2000);
 
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
 
-            uRServerAction_left.GripperCloseForceMIN();
+            uRServerAction_left.GripperClose();
 
             RobotInitial.robot_initial_pos_lc[1] -= 0.020F;
 
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
 
-            Thread.Sleep(2000);
-
-            uRServerAction_right.Move(new float[] { cup_r[0] + 0.015F, 0.110F, cup_r[1] + 0.040F, 0.015F, 3.18F, 0.04F });
-            uRServerAction_right.Move(new float[] { cup_r[0] + 0.015F, 0.140F, cup_r[1] + 0.040F, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + 0.035F, 0.110F, cup_r[1] + 0.030F, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + 0.035F, 0.140F, cup_r[1] + 0.030F, 0.015F, 3.18F, 0.04F });
 
             uRServerAction_right.MoveJoint(5, 1.75F);
             Thread.Sleep(3000);
@@ -77,13 +75,10 @@ namespace multimodal
 
 
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_rc);
-            Thread.Sleep(2000);
 
             RobotInitial.robot_initial_pos_lc[1] += 0.020F;
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
             uRServerAction_left.GripperOpen();
-
-            Thread.Sleep(2000);
 
             RobotInitial.robot_initial_pos_lc[1] -= 0.01F;
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
@@ -91,18 +86,16 @@ namespace multimodal
 
             uRServerAction_left.TurnJoint(-4, 25, 2);
 
-            Thread.Sleep(5000);
             RobotInitial.robot_initial_pos_rc[1] += 0.02F;
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_rc);
-            Thread.Sleep(2000);
             RobotInitial.robot_initial_pos_rc[1] -= 0.02F;
 
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
 
             uRServerAction_right.Move(new float[] { RobotInitial.robot_initial_pos_rc[0], 0.110F, bottle_r[1] + ImagePosition.image_right_y, 0.015F, 3.18F, 0.04F });
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.110F, bottle_r[1] + ImagePosition.image_right_y, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.110F, bottle_r[1] + ImagePosition.image_right_y+0.01F, 0.015F, 3.18F, 0.04F });
 
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.249F, bottle_r[1] + ImagePosition.image_right_y, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.249F, bottle_r[1] + ImagePosition.image_right_y+0.01F, 0.015F, 3.18F, 0.04F });
             uRServerAction_right.GripperOpen();
             uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.249F, bottle_r[1] + ImagePosition.image_right_y + 0.03F, 0.015F, 3.18F, 0.04F });
 
@@ -111,50 +104,48 @@ namespace multimodal
         }
         public void open_bottle(float[] bottle_r, float[] cup_r, float[] cup_l, float[] bottle_l)
         {
-            uRServerAction_left.GripperOpen();
+            uRServerAction_left.GripperOpenAsync();
             uRServerAction_right.GripperOpen();
-            uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+            uRServerAction_right.MoveAsync(RobotInitial.robot_initial_pos_r);
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
 
 
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x-0.01F, -0.015F, bottle_r[1] - 0.080F, 2.453F,-2.344F, -2.382F });
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x - 0.01F, 0.030F, bottle_r[1] - 0.080F, 2.453F, -2.344F, -2.382F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, -0.015F, bottle_r[1] - 0.085F, 2.453F,-2.344F, -2.382F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x, 0.030F, bottle_r[1] - 0.085F, 2.453F, -2.344F, -2.382F });
 
-            uRServerAction_right.GripperCloseForceMIN();
-            Thread.Sleep(1000);
+            uRServerAction_right.GripperCloseMAX();
 
             uRServerAction_right.Move(new float[] { -0.325F, -0.118F, -0.160F, 2.453F, -2.344F, -2.382F });
             uRServerAction_left.Move(new float[] { 0.330F, 0.100F, -0.080F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.Move(new float[] { 0.330F, 0.100F, -0.110F, 0.06F, -3.127F, 0.093F });
-            uRServerAction_left.GripperCloseForceMAX();
-            Thread.Sleep(2000);
+            uRServerAction_left.GripperCloseMAX();
             uRServerAction_right.GripperOpen();
 
             uRServerAction_right.Move(new float[] { -0.325F, -0.151F, -0.160F, 2.453F, -2.344F, -2.382F });
             //uRServerAction_right.Move(new float[] { -0.325F, -0.150F, -0.158F, 2.453F, -2.344F, -2.382F });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-            uRServerAction_right.Move(new float[] { -0.337F, 0.0375F,  0.030F, 0.035F, -3.117F, -0.016F });
-            uRServerAction_right.Move(new float[] { -0.337F, 0.0375F, -0.015F, 0.035F, -3.117F, -0.016F });           
-            uRServerAction_right.GripperCloseForceMIN();
-            Thread.Sleep(1000);
+            uRServerAction_right.Move(new float[] { -0.331F, 0.055F,  0.030F, 0.035F, -3.117F, -0.016F });
+            uRServerAction_right.Move(new float[] { -0.331F, 0.055F, -0.015F, 0.035F, -3.117F, -0.016F });           
+            uRServerAction_right.GripperClose();
+
             uRServerAction_right.GripperOpen();
-            uRServerAction_right.Move(new float[] { -0.337F, 0.0384F, 0.030F, 0.035F, -3.117F, -0.016F });
+            uRServerAction_right.Move(new float[] { -0.331F, 0.055F, 0.030F, 0.035F, -3.117F, -0.016F });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
 
-            uRServerAction_left.Move(new float[] { cup_l[0] + ImagePosition.image_left_x - 0.095F, 0.150F, cup_l[1] + ImagePosition.image_left_y - 0.03F, 0.06F, -3.127F, 0.093F });
+            uRServerAction_left.Move(new float[] { cup_l[0] + ImagePosition.image_left_x - 0.095F, 0.150F, cup_l[1] + ImagePosition.image_left_y - 0.01F, 0.06F, -3.127F, 0.093F });
 
             uRServerAction_left.MoveJoint(5, -2F);
             Thread.Sleep(5000);
             uRServerAction_left.MoveJoint(5, 2F);
 
-            uRServerAction_right.GripperCloseForceMAX();
+            uRServerAction_right.GripperCloseMAX();
 
             uRServerAction_left.Move(new float[] { 0.330F, 0.100F, -0.120F, 0.06F, -3.127F, 0.093F });
             
-            uRServerAction_right.Move(new float[] { -0.290F, 0.030F, 0.035F, 0.044F, -3.110F, -0.143F });
-            uRServerAction_right.Move(new float[] { -0.290F, 0.030F, 0.0085F, 0.044F, -3.110F, -0.143F });
-            uRServerAction_right.Move(new float[] { -0.268F, -0.035F, 0.0085F, 0.044F, -3.110F, -0.143F });
-            uRServerAction_right.Move(new float[] { -0.333F, -0.035F, 0.0085F, 0.044F, -3.110F, -0.143F });
+            uRServerAction_right.Move(new float[] { -0.285F, 0.030F, 0.035F, 0.044F, -3.110F, -0.143F });
+            uRServerAction_right.Move(new float[] { -0.285F, 0.030F, 0.013F, 0.044F, -3.110F, -0.143F });
+            uRServerAction_right.Move(new float[] { -0.270F, -0.035F, 0.013F, 0.044F, -3.110F, -0.143F });
+            uRServerAction_right.Move(new float[] { -0.343F, -0.035F, 0.013F, 0.044F, -3.110F, -0.143F });
 
             uRServerAction_right.ForceMode(1, 28);
             Thread.Sleep(2000);
@@ -163,18 +154,17 @@ namespace multimodal
             uRServerAction_right.GripperOpen();
             uRServerAction_right.Move(new float[] { -0.325F, -0.130F, -0.153F, 2.453F, -2.344F, -2.382F });
             uRServerAction_right.Move(new float[] { -0.325F, -0.118F, -0.153F, 2.453F, -2.344F, -2.382F });
-            uRServerAction_right.GripperCloseForceMIN();
-            Thread.Sleep(5000);
+            uRServerAction_right.GripperClose();
 
             uRServerAction_left.GripperOpen();
             uRServerAction_left.Move(new float[] { 0.330F, 0.100F, -0.080F, 0.06F, -3.127F, 0.093F });         
             uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
             Thread.Sleep(2000);
 
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x - 0.01F, 0.030F, bottle_r[1] - 0.080F, 2.453F, -2.344F, -2.382F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x,  0.030F, bottle_r[1] - 0.085F, 2.453F, -2.344F, -2.382F });
             Thread.Sleep(1000);
             uRServerAction_right.GripperOpen();
-            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x - 0.01F, -0.015F, bottle_r[1] - 0.080F, 2.453F, -2.344F, -2.382F });
+            uRServerAction_right.Move(new float[] { bottle_r[0] + ImagePosition.image_right_x , -0.015F, bottle_r[1] - 0.085F, 2.453F, -2.344F, -2.382F });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
 
 
@@ -188,7 +178,7 @@ namespace multimodal
 
             uRServerAction_left.Move(new float[] { bottle_l[0] + ImagePosition.image_left_x, 0.280F, bottle_l[1] + ImagePosition.image_left_y + 0.02F, 0.06F, -3.127F, 0.093F });
             uRServerAction_left.Move(new float[] { bottle_l[0] + ImagePosition.image_left_x , 0.280F, bottle_l[1] + ImagePosition.image_left_y - 0.04F, 0.06F, -3.127F, 0.093F });
-            uRServerAction_left.GripperCloseForceMIN();
+            uRServerAction_left.GripperClose();
             Thread.Sleep(1000);
             uRServerAction_left.Move(new float[] { cup_l[0] + ImagePosition.image_left_x - 0.065F, 0.140F, cup_l[1] + ImagePosition.image_left_y - 0.016F, 0.06F, -3.127F, 0.093F });
 
@@ -208,17 +198,17 @@ namespace multimodal
         }
         public void pick_cup(float[] cup_r, float[] cup_l)
         {
-            uRServerAction_left.GripperCloseForceMIN();
-            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x + 0.027F, 0.200F, cup_r[1] + 0.045F, 0.015F, 3.18F, 0.04F });
-            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x + 0.027F, 0.275F, cup_r[1] + 0.045F, 0.015F, 3.18F, 0.04F });
-            uRServerAction_right.GripperCloseForceMIN();
+            uRServerAction_left.GripperClose();
+            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x , 0.190F, cup_r[1] + 0.045F, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x , 0.275F, cup_r[1] + 0.045F, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.GripperClose();
 
 
-            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x + 0.027F, 0.050F, cup_r[1] + 0.05F, 0.015F, 3.18F, 0.04F });
+            uRServerAction_right.Move(new float[] { cup_r[0] + ImagePosition.image_right_x , 0.050F, cup_r[1] + 0.05F, 0.015F, 3.18F, 0.04F });
 
             //uRServerAction_left.Move(new float[] { cup_l[0] + ImagePosition.image_left_x - 0.02F, 0.150F, cup_l[1] + ImagePosition.image_left_y, 0.071F, 2.94F, -0.067F});
             //uRServerAction_left.Move(new float[] { cup_l[0] + ImagePosition.image_left_x - 0.02F, 0.135F, cup_l[1] + ImagePosition.image_left_y, 0.071F, 2.94F, -0.067F });
-            Thread.Sleep(1000);
+
 
 
             uRServerAction_right.Move(new float[] { -0.500F, 0.050F, -0.085F, 0.015F, 3.18F, 0.04F });
