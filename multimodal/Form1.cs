@@ -32,6 +32,7 @@ using Emgu.CV.Util;
 using Emgu.CV.CvEnum;
 
 using PerspectiveTransformSetting;
+using WebSocketSharp;
 // CHINF 的類別庫
 //using URControler2;
 using CIRLABURControl;
@@ -50,6 +51,7 @@ namespace multimodal
         URServerAction uRServerAction_right;
         RobotMakeDrinkControl robotMakeDrinkControl;
 
+        private delegate void SafeCallDelegate(Dictionary<TextBox, string> obj);
 
         public Form1()
         {
@@ -196,7 +198,45 @@ namespace multimodal
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            var ws = new WebSocket("wss://test.chinf.me/listener/ur/");
+            ws.OnMessage += (_, ee) =>
+            {
+                switch (ee.Data)
+                {
+                    case "A":
+                        //uRServerAction.Move(new float[] { -0.394f, 0.059f, -0.093f, 0.28f, -3.2f, -0.15f });
+                        Console.WriteLine($"Run A");
+                        uRServerAction_left.GripperOpen();
+                        uRServerAction_right.GripperOpen();
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+                        uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
 
+                        clear_all();
+
+                        mode_1 = false;
+                        mode_2 = false;
+                        //mode_3 = false;
+                        drink_1 = true;
+
+                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+
+                        objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+                        while (mode_3)
+                        {
+                            Show_capture(sender, e);
+                        }
+                        break;
+                    case "B":
+                        //uRServerAction.Move(new float[] { -0.252f, -0.303f, -0.090f, 1.77f, -2.7f, 0.19f });
+                        Console.WriteLine($"Run B");
+                        break;
+                    default:
+                        Console.WriteLine($"{ee.Data} isn't know");
+                        break;
+                }
+            };
+            ws.Connect();
+            ws.Send("BALUS");
         }
 
         private void textBox3_TextChanged_1(object sender, EventArgs e)
@@ -544,7 +584,10 @@ namespace multimodal
             else if (mode_3 == true)
             {
                 System.Windows.Forms.Application.Idle -= new EventHandler(Show_capture);
-                textBox2.Text = "準備您的飲料中，請稍後~";
+                Dictionary<TextBox, string> keyValues = new Dictionary<TextBox, string>();
+                keyValues.Add(textBox2, "準備您的飲料中，請稍後~");
+                WriteTextSafe(keyValues);
+                //textBox2.Text = "準備您的飲料中，請稍後~";
                 mode_3 = false;
 
 
@@ -931,7 +974,9 @@ namespace multimodal
             }
             else
             {
-                textBox7.Text = count.ToString();
+                Dictionary<TextBox, string> keyValues = new Dictionary<TextBox, string>();
+                keyValues.Add(textBox7, count.ToString());
+                WriteTextSafe(keyValues);
                 stop_run();
             }
 
@@ -939,6 +984,19 @@ namespace multimodal
 
             imageBox1.Image = img1_2;
         }
+        void WriteTextSafe(Dictionary<TextBox,string> obj)
+        {
+            if (obj.ElementAt(0).Key.InvokeRequired)
+            {
+                var d = new SafeCallDelegate(WriteTextSafe);
+                obj.ElementAt(0).Key.Invoke(d, new object[] { obj });
+            }
+            else
+            {
+                obj.ElementAt(0).Key.Text = obj.ElementAt(0).Value;
+            }
+        }
+
         void Show_capture_b(object sender, EventArgs e)
         {
             cap_img = cap.QueryFrame().Bitmap;
