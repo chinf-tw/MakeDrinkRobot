@@ -1003,7 +1003,9 @@ namespace multimodal
         }
         void TextBoxWriteText(TextBox textBox, string text)
         {
-            WriteTextSafe(new Dictionary<TextBox, string>().Add(textBox, text));
+            var d = new Dictionary<TextBox, string>();
+            d.Add(textBox, text);
+            WriteTextSafe(d);
         }
 
         void Show_capture_b(object sender, EventArgs e)
