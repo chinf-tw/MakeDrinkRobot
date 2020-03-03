@@ -439,12 +439,16 @@ namespace multimodal
             count2 = 0;
             count3 = 0;
             count4 = 0;
-
-            textBox1.Text = "";
-            textBox2.Text = "";
-            textBox4.Text = "";
-            textBox5.Text = "";
-            textBox7.Text = "";
+            TextBoxWriteText(textBox1, "");
+            TextBoxWriteText(textBox2, "");
+            TextBoxWriteText(textBox4, "");
+            TextBoxWriteText(textBox5, "");
+            TextBoxWriteText(textBox7, "");
+            //textBox1.Text = "";
+            //textBox2.Text = "";
+            //textBox4.Text = "";
+            //textBox5.Text = "";
+            //textBox7.Text = "";
 
         }
 
