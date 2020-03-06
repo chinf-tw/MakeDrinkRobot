@@ -234,6 +234,9 @@ namespace multimodal
                         //uRServerAction.Move(new float[] { -0.252f, -0.303f, -0.090f, 1.77f, -2.7f, 0.19f });
                         Console.WriteLine($"Run B");
                         break;
+                    case "Go":
+                        uRServerAction_left.Move(new float[] { cup_one_r[0],-0.02858f, cup_one_r[1],1.432f,-2.429f,-2.503f });
+                        break;
                     default:
                         Console.WriteLine($"{ee.Data} isn't know");
                         break;
