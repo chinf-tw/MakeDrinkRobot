@@ -163,7 +163,7 @@ namespace multimodal
 
         bool cup_1, cup_2, cup_3 = false; // 杯子個數
         bool bottle_1, bottle_2, bottle_3 = false; //瓶子個數
-        bool drink_1, drink_2, drink_3, drink_4 = false; //飲料種類(所選取的飲料類別為true)
+        bool drink_1, drink_2, drink_3, drink_4, drink_5 = false; //飲料種類(所選取的飲料類別為true)
         bool gradual_check = false;
 
         int count_t = 0; //計數
@@ -201,7 +201,8 @@ namespace multimodal
             var ws = new WebSocket("wss://test.chinf.me/listener/ur/");
             ws.OnMessage += (_, ee) =>
             {
-                switch (ee.Data)
+                var data = ee.Data.Split(',');
+                switch (data[0])
                 {
                     case "A":
                         //uRServerAction.Move(new float[] { -0.394f, 0.059f, -0.093f, 0.28f, -3.2f, -0.15f });
@@ -229,13 +230,50 @@ namespace multimodal
                         {
                             Show_capture_b(sender, e);
                         }
+                        
                         break;
                     case "B":
-                        //uRServerAction.Move(new float[] { -0.252f, -0.303f, -0.090f, 1.77f, -2.7f, 0.19f });
-                        Console.WriteLine($"Run B");
+                        uRServerAction_right.GripperOpen();
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+
+                        clear_all();
+
+                        mode_1 = false;
+                        mode_2 = false;
+                        //mode_3 = false;
+                        drink_5 = true;
+
+                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+
+                        objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+                        while (mode_3)
+                        {
+                            Show_capture(sender, e);
+                        }
+                        while (mode_4)
+                        {
+                            Show_capture_b(sender, e);
+                        }
+                        moveToPioneer(float.Parse(data[1]), float.Parse(data[2]));
+                        //moveToPioneer(0, 0);
                         break;
                     case "Go":
-                        uRServerAction_left.Move(new float[] { cup_one_r[0],-0.02858f, cup_one_r[1],1.432f,-2.429f,-2.503f });
+                        byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
+                        ws.Send(UTF8bytes);
+                        break;
+                    case "RightMoveJ":
+                        var length = data.Length;
+                        var index = 1;
+                        string[] pose = new string[length-index];
+                        Array.Copy(data, index, pose, 0, length - index);
+                        float[] floatPose = Array.ConvertAll(pose,
+                                  delegate (string s) { return float.Parse(s); });
+                        if (floatPose.Length != 6)
+                        {
+                            Console.WriteLine("floatPose length is not 6, that cann't using Move function");
+                            break;
+                        }
+                        uRServerAction_right.Move(floatPose);
                         break;
                     default:
                         Console.WriteLine($"{ee.Data} isn't know");
@@ -244,6 +282,19 @@ namespace multimodal
             };
             ws.Connect();
             ws.Send("BALUS");
+        }
+        // Clip cup to Pioneer, using Correction values (X and Z)
+        private void moveToPioneer(float X,float Z)
+        {
+            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.21324f, cup_one_r[1] + 0.0305f + 0.060f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.21324f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.GripperClose();
+            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.11476f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.11476f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.25739f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.GripperOpen();
+            uRServerAction_right.Move(new float[] { -0.20497f + X, 0.11476f, 0.47688f + Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
         }
 
         private void textBox3_TextChanged_1(object sender, EventArgs e)
@@ -429,6 +480,7 @@ namespace multimodal
             drink_2 = false;
             drink_3 = false;
             drink_4 = false;
+            drink_5 = false;
             gradual_check = false;
 
             move_1 = false;
@@ -659,8 +711,9 @@ namespace multimodal
                 {
                     TextBoxWriteText(textBox2, DrinkName.first_drink_name);
                     //textBox2.Text = DrinkName.first_drink_name;
-                    mode_4 = false;                  
+                    mode_4 = false;
                     robotMakeDrinkControl.rotate_bottle(bottle_right_r, cup_one_r, bottle_right_l);
+
                     move_1 = true;
                     stop_run();
                 }
@@ -720,6 +773,11 @@ namespace multimodal
                         mode_4 = false;
                         stop_run();
                     }
+                }
+                else if (drink_5)
+                {
+                    mode_4 = false;
+                    stop_run();
                 }
 
             }
