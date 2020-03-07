@@ -58,13 +58,11 @@
     <Reference Include="Alturos.Yolo, Version=2.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Alturos.Yolo.2.6.3\lib\net461\Alturos.Yolo.dll</HintPath>
     </Reference>
-    <Reference Include="CIRLABURControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\CIR\Desktop\CHINF\URController\CIRLABURControl\bin\Debug\CIRLABURControl.dll</HintPath>
+    <Reference Include="CIRLABURControl">
+      <HintPath>..\..\URController\CIRLABURControl\bin\Debug\CIRLABURControl.dll</HintPath>
     </Reference>
-    <Reference Include="CS_Form_PtSetting, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\CS_Form_PtSetting\CS_Form_PtSetting\bin\Debug\CS_Form_PtSetting.exe</HintPath>
+    <Reference Include="CS_Form_PtSetting">
+      <HintPath>..\..\..\CS_Form_PtSetting\CS_Form_PtSetting\bin\Debug\CS_Form_PtSetting.exe</HintPath>
     </Reference>
     <Reference Include="Emgu.CV.UI, Version=4.1.1.3497, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
       <HintPath>..\packages\EMGU.CV.4.1.1.3497\lib\net35\Emgu.CV.UI.dll</HintPath>
@@ -102,6 +100,7 @@
   <ItemGroup>
     <Compile Include="ConstVar.cs" />
     <Compile Include="dynamixel.cs" />
+    <Compile Include="ExtraFunction.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
