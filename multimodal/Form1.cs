@@ -53,9 +53,31 @@ namespace multimodal
 
         private delegate void SafeCallDelegate(Dictionary<TextBox, string> obj);
 
+        void StartURPolyscope(string addr, int port)
+        {
+            TcpClient tcpClient = new TcpClient(addr, port);
+            NetworkStream stream = tcpClient.GetStream();
+            byte[] buffer = new byte[2048];
+            byte[] buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
+            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+            Byte[] load = System.Text.Encoding.ASCII.GetBytes("load chinf_test.urp");
+            Byte[] play = System.Text.Encoding.ASCII.GetBytes("play");
+            stream.Write(load, 0, load.Length);
+            buffer = new byte [2048];
+            buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
+            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+            stream.Write(play, 0, play.Length);
+            buffer = new byte[2048];
+            buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+        }
         public Form1()
         {
             InitializeComponent();
+
+            //StartURPolyscope("192.168.1.107",29999);
             int port_r = 1100;
             string addr = "0.0.0.0";
             ListenerBaseTcpListener listener_r = new ListenerBaseTcpListener(port_r, addr);
@@ -78,6 +100,8 @@ namespace multimodal
 
             ///////////////////////////////////////////////////////////////////////////////////////////
 
+
+            //StartURPolyscope("192.168.1.108", 29999);
             int port_l = 1101;
             string addr_l = "0.0.0.0";
             ListenerBaseTcpListener listener_l = new ListenerBaseTcpListener(port_l, addr_l);
@@ -260,6 +284,28 @@ namespace multimodal
                         //moveToPioneer(0, 0);
                         break;
                     case "B_test":
+                        uRServerAction_right.GripperOpen();
+                        uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+
+                        clear_all();
+
+                        mode_1 = false;
+                        mode_2 = false;
+                        //mode_3 = false;
+                        drink_5 = true;
+
+                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+
+                        objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
+                        while (mode_3)
+                        {
+                            Show_capture(sender, e);
+                        }
+                        while (mode_4)
+                        {
+                            Show_capture_b(sender, e);
+                        }
                         moveToPioneer(0, 0);
                         break;
                     case "Go":
