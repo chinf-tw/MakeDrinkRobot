@@ -28,5 +28,9 @@ namespace multimodal
         public static readonly string fourth_drink_name = "";
         public static readonly string gradual_name = "漸層";
     }
+    public class TemporaryAnchor
+    {
+        public static readonly float[] PictureAreaAfter = { -0.51215F, -0.11965F, 0.19914F, 1.4202F, -2.5171F, -0.3372F };
+    }
 }
 

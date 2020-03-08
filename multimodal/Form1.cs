@@ -205,6 +205,7 @@ namespace multimodal
                 switch (data[0])
                 {
                     case "A":
+                        motor1.MxMotorSetPosition(obj_pos);
                         //uRServerAction.Move(new float[] { -0.394f, 0.059f, -0.093f, 0.28f, -3.2f, -0.15f });
                         Console.WriteLine($"Run A");
                         uRServerAction_left.GripperOpen();
@@ -234,6 +235,7 @@ namespace multimodal
                         break;
                     case "B":
                         uRServerAction_right.GripperOpen();
+                        uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
 
                         clear_all();
@@ -258,6 +260,7 @@ namespace multimodal
                         //moveToPioneer(0, 0);
                         break;
                     case "Go":
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
                         ws.Send(UTF8bytes);
                         break;
