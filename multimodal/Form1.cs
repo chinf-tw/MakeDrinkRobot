@@ -259,6 +259,9 @@ namespace multimodal
                         moveToPioneer(float.Parse(data[1]), float.Parse(data[2]));
                         //moveToPioneer(0, 0);
                         break;
+                    case "B_test":
+                        moveToPioneer(0, 0);
+                        break;
                     case "Go":
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
