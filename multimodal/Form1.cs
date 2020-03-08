@@ -61,23 +61,24 @@ namespace multimodal
             byte[] buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
             Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
             Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
-            Byte[] load = System.Text.Encoding.ASCII.GetBytes("load chinf_test.urp");
-            Byte[] play = System.Text.Encoding.ASCII.GetBytes("play");
-            stream.Write(load, 0, load.Length);
-            buffer = new byte [2048];
-            buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            cmd(stream, "stop");
+            cmd(stream, "load chinf_test.urp");
+            cmd(stream, "play");
+        }
+        void cmd(NetworkStream stream, string cmd)
+        {
+            Byte[] cmdData = System.Text.Encoding.ASCII.GetBytes($"{cmd}\n");
+            stream.Write(cmdData, 0, cmdData.Length);
+            var buffer = new byte[2048];
+            var buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
             Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
-            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
-            stream.Write(play, 0, play.Length);
-            buffer = new byte[2048];
-            buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
             Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
         }
         public Form1()
         {
             InitializeComponent();
 
-            //StartURPolyscope("192.168.1.107",29999);
+            StartURPolyscope("192.168.0.107", 29999);
             int port_r = 1100;
             string addr = "0.0.0.0";
             ListenerBaseTcpListener listener_r = new ListenerBaseTcpListener(port_r, addr);
@@ -101,7 +102,7 @@ namespace multimodal
             ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-            //StartURPolyscope("192.168.1.108", 29999);
+            StartURPolyscope("192.168.0.199", 29999);
             int port_l = 1101;
             string addr_l = "0.0.0.0";
             ListenerBaseTcpListener listener_l = new ListenerBaseTcpListener(port_l, addr_l);
@@ -242,7 +243,7 @@ namespace multimodal
                         mode_1 = false;
                         mode_2 = false;
                         //mode_3 = false;
-                        drink_1 = true;
+                        drink_2 = true;
 
                         cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
 
@@ -280,8 +281,9 @@ namespace multimodal
                         {
                             Show_capture_b(sender, e);
                         }
+                        Console.WriteLine($"{float.Parse(data[1])} , {float.Parse(data[2])}");
                         moveToPioneer(float.Parse(data[1]), float.Parse(data[2]));
-                        //moveToPioneer(0, 0);
+                        
                         break;
                     case "B_test":
                         uRServerAction_right.GripperOpen();
@@ -309,7 +311,9 @@ namespace multimodal
                         moveToPioneer(0, 0);
                         break;
                     case "Go":
-                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+                        motor1.MxMotorSetPosition(obj_pos);
+                        //uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+                        RunHSV();
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
                         ws.Send(UTF8bytes);
                         break;
@@ -334,6 +338,37 @@ namespace multimodal
             };
             ws.Connect();
             ws.Send("BALUS");
+        }
+        void RunHSV()
+        {
+            //Process p = new Process();
+            //String str = null;
+
+            //p.StartInfo.FileName = "cmd.exe";
+
+            //p.StartInfo.UseShellExecute = false;
+            //p.StartInfo.RedirectStandardInput = true;
+            //p.StartInfo.RedirectStandardOutput = true;
+            //p.StartInfo.RedirectStandardError = true;
+            ////p.StartInfo.CreateNoWindow = true; //不跳出cmd視窗
+
+            //p.Start();
+            ////p.StandardInput.WriteLine("python C:\\Users\\CIR\\Desktop\\CHINF\\iot\\hsv.py");
+            //p.StandardInput.WriteLine("ipconfig");
+            //str = p.StandardOutput.ReadToEnd();
+            //p.WaitForExit();
+            //p.Close();
+            //Console.WriteLine("*** Run hSV ***");
+            //Console.WriteLine(str);
+            Process p = new Process();//設定呼叫的程式名，不是系統目錄的需要完整路徑 
+            p.StartInfo.FileName = "C:\\Users\\CIR\\Desktop\\CHINF\\MakeDrinkRobot\\multimodal\\HSV.bat";//傳入執行引數 
+            p.StartInfo.Arguments = "";
+            p.StartInfo.UseShellExecute = false;//是否重定向標準輸入 
+            p.StartInfo.RedirectStandardInput = false;//是否重定向標準轉出 
+            p.StartInfo.RedirectStandardOutput = false;//是否重定向錯誤 
+            p.StartInfo.RedirectStandardError = false;//執行時是不是顯示視窗 
+            p.StartInfo.CreateNoWindow = true;//啟動 
+            p.Start();
         }
         // Clip cup to Pioneer, using Correction values (X and Z)
         private void moveToPioneer(float X,float Z)
