@@ -64,6 +64,18 @@ namespace multimodal
             cmd(stream, "stop");
             cmd(stream, "load chinf_test.urp");
             cmd(stream, "play");
+            stream.Dispose();
+            tcpClient.Dispose();
+        }
+        void cmd(string addr, int port,string command)
+        {
+            TcpClient tcpClient = new TcpClient(addr, port);
+            NetworkStream stream = tcpClient.GetStream();
+            byte[] buffer = new byte[2048];
+            byte[] buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
+            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+            cmd(stream, command);
         }
         void cmd(NetworkStream stream, string cmd)
         {
@@ -73,6 +85,21 @@ namespace multimodal
             var buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
             Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
             Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+        }
+        //~Form1()
+        //{
+        //    End("192.168.0.107", 29999);
+        //    End("192.168.0.101", 29999);
+        //}
+        void End(string addr, int port)
+        {
+            TcpClient tcpClient = new TcpClient(addr, port);
+            NetworkStream stream = tcpClient.GetStream();
+            byte[] buffer = new byte[2048];
+            byte[] buffer2 = new byte[stream.Read(buffer, 0, buffer.Length)];
+            Array.Copy(buffer, 0, buffer2, 0, buffer2.Length);
+            Console.WriteLine(System.Text.Encoding.Default.GetString(buffer2));
+            cmd(stream, "stop\n");
         }
         public Form1()
         {
@@ -102,7 +129,7 @@ namespace multimodal
             ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-            StartURPolyscope("192.168.0.199", 29999);
+            StartURPolyscope("192.168.0.108", 29999);
             int port_l = 1101;
             string addr_l = "0.0.0.0";
             ListenerBaseTcpListener listener_l = new ListenerBaseTcpListener(port_l, addr_l);
@@ -133,7 +160,7 @@ namespace multimodal
         MxMotor motor1 = new MxMotor();
         int test;
         int initial_pos = 2020;
-        int obj_pos = 1385;
+        int obj_pos = 1634;
 
         
         YoloWrapper gestureWrapper;
@@ -229,7 +256,7 @@ namespace multimodal
                 var data = ee.Data.Split(',');
                 switch (data[0])
                 {
-                    case "A":
+                    case "Run":
                         motor1.MxMotorSetPosition(obj_pos);
                         //uRServerAction.Move(new float[] { -0.394f, 0.059f, -0.093f, 0.28f, -3.2f, -0.15f });
                         Console.WriteLine($"Run A");
@@ -244,8 +271,9 @@ namespace multimodal
                         mode_2 = false;
                         //mode_3 = false;
                         drink_2 = true;
+                        //drink_1 = true;
 
-                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+                        cap = new Emgu.CV.VideoCapture(2, VideoCapture.API.DShow);
 
                         objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
                         while (mode_3)
@@ -256,7 +284,8 @@ namespace multimodal
                         {
                             Show_capture_b(sender, e);
                         }
-                        
+                        RunHSV();
+                        ws.Send(Encoding.UTF8.GetBytes("doneDrink"));
                         break;
                     case "B":
                         uRServerAction_right.GripperOpen();
@@ -270,7 +299,7 @@ namespace multimodal
                         //mode_3 = false;
                         drink_5 = true;
 
-                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+                        cap = new Emgu.CV.VideoCapture(2, VideoCapture.API.DShow);
 
                         objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
                         while (mode_3)
@@ -285,7 +314,15 @@ namespace multimodal
                         moveToPioneer(float.Parse(data[1]), float.Parse(data[2]));
                         
                         break;
-                    case "B_test":
+                    case "Go":
+                        motor1.MxMotorSetPosition(obj_pos);
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+                        //RunHSV();
+                        byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
+                        ws.Send(UTF8bytes);
+                        break;
+                    case "Go_test":
+                        motor1.MxMotorSetPosition(obj_pos);
                         uRServerAction_right.GripperOpen();
                         uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
@@ -297,7 +334,7 @@ namespace multimodal
                         //mode_3 = false;
                         drink_5 = true;
 
-                        cap = new Emgu.CV.VideoCapture(1, VideoCapture.API.DShow);
+                        cap = new Emgu.CV.VideoCapture(2, VideoCapture.API.DShow);
 
                         objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
                         while (mode_3)
@@ -309,13 +346,6 @@ namespace multimodal
                             Show_capture_b(sender, e);
                         }
                         moveToPioneer(0, 0);
-                        break;
-                    case "Go":
-                        motor1.MxMotorSetPosition(obj_pos);
-                        //uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-                        RunHSV();
-                        byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
-                        ws.Send(UTF8bytes);
                         break;
                     case "RightMoveJ":
                         var length = data.Length;
@@ -341,25 +371,6 @@ namespace multimodal
         }
         void RunHSV()
         {
-            //Process p = new Process();
-            //String str = null;
-
-            //p.StartInfo.FileName = "cmd.exe";
-
-            //p.StartInfo.UseShellExecute = false;
-            //p.StartInfo.RedirectStandardInput = true;
-            //p.StartInfo.RedirectStandardOutput = true;
-            //p.StartInfo.RedirectStandardError = true;
-            ////p.StartInfo.CreateNoWindow = true; //不跳出cmd視窗
-
-            //p.Start();
-            ////p.StandardInput.WriteLine("python C:\\Users\\CIR\\Desktop\\CHINF\\iot\\hsv.py");
-            //p.StandardInput.WriteLine("ipconfig");
-            //str = p.StandardOutput.ReadToEnd();
-            //p.WaitForExit();
-            //p.Close();
-            //Console.WriteLine("*** Run hSV ***");
-            //Console.WriteLine(str);
             Process p = new Process();//設定呼叫的程式名，不是系統目錄的需要完整路徑 
             p.StartInfo.FileName = "C:\\Users\\CIR\\Desktop\\CHINF\\MakeDrinkRobot\\multimodal\\HSV.bat";//傳入執行引數 
             p.StartInfo.Arguments = "";
@@ -377,10 +388,12 @@ namespace multimodal
             uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.21324f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
             uRServerAction_right.GripperClose();
             uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.11476f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
+            // 把飲料拿到Pioneer杯架上方
             uRServerAction_right.Move(new float[] { -0.20497f+X, 0.11476f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
-            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.25739f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
+            // 把飲料放入杯架
+            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.24239f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
             uRServerAction_right.GripperOpen();
-            uRServerAction_right.Move(new float[] { -0.20497f + X, 0.11476f, 0.47688f + Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.Move(new float[] { -0.20497f + X, 0.12076f, 0.47688f + Z, 2.9428f, -0.00609f, -1.0452f });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
         }
 
@@ -412,43 +425,7 @@ namespace multimodal
 
         private void button3_Click(object sender, EventArgs e)
         {
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-            uRServerAction_left.TurnJoint(4, -15, 2);
-            Thread.Sleep(2000);
-
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-
-            uRServerAction_left.GripperCloseMAX();
-
-            RobotInitial.robot_initial_pos_lc[1] -= 0.020F;
-
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-
-            Thread.Sleep(2000);
-
-            RobotInitial.robot_initial_pos_lc[1] += 0.020F;
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-            uRServerAction_left.GripperOpen();
-
-            Thread.Sleep(2000);
-
-            RobotInitial.robot_initial_pos_lc[1] -= 0.01F;
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-
-            uRServerAction_left.TurnJoint(-4, 25, 2);
-
-            Thread.Sleep(5000);
-            RobotInitial.robot_initial_pos_rc[1] += 0.02F;
-            uRServerAction_right.Move(RobotInitial.robot_initial_pos_rc);
-            //RobotInitial.robot_initial_pos_lc[1] -= 0.02F;
-            //uRServerAction_left.Move(RobotInitial.robot_initial_pos_lc);
-            Thread.Sleep(2000);
-
-            uRServerAction_left.Move(RobotInitial.robot_initial_pos_l);
-
-
-            uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-
+            cmd("192.168.0.107", 29999, "pause");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -479,8 +456,8 @@ namespace multimodal
 
             test = motor1.ReadMxPosition();
 
-            motor1.MxMotorSetPosition(initial_pos);
-            System.Threading.Thread.Sleep(1000);
+            //motor1.MxMotorSetPosition(initial_pos);
+            //System.Threading.Thread.Sleep(1000);
             motor1.MxMotorSetPosition(obj_pos);
 
             Form_PtSetting form_Pt = new Form_PtSetting();
