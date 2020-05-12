@@ -317,7 +317,7 @@ namespace multimodal
                     case "Go":
                         motor1.MxMotorSetPosition(obj_pos);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-                        //RunHSV();
+                        RunHSV();
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
                         ws.Send(UTF8bytes);
                         break;
