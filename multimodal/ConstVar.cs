@@ -31,6 +31,7 @@ namespace multimodal
     public class TemporaryAnchor
     {
         public static readonly float[] PictureAreaAfter = { -0.51215F, -0.11965F, 0.19914F, 1.4202F, -2.5171F, -0.3372F };
+        public static readonly float[] testPutInPioneerPoint = { -0.3958f,0.0589f };
     }
 }
 

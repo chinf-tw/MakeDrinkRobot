@@ -287,7 +287,7 @@ namespace multimodal
                         RunHSV();
                         ws.Send(Encoding.UTF8.GetBytes("doneDrink"));
                         break;
-                    case "B":
+                    case "PutInPioneer":
                         uRServerAction_right.GripperOpen();
                         uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
@@ -310,42 +310,27 @@ namespace multimodal
                         {
                             Show_capture_b(sender, e);
                         }
-                        Console.WriteLine($"{float.Parse(data[1])} , {float.Parse(data[2])}");
-                        moveToPioneer(float.Parse(data[1]), float.Parse(data[2]));
+                        if(Data.Length > 2){
+                            Console.WriteLine($"Correction {float.Parse(data[1])} , {float.Parse(data[2])}");
+                            moveToPioneer(float.Parse(data[1]), float.Parse(data[2]),cup_one_r[0],cup_one_r[1]);
+                        }else
+                        {
+                            Console.WriteLine($"Move to ideal position with Pioneer.");
+                            // error??
+                            // moveToPioneer(0f,0f,TemporaryAnchor.testPutInPioneerPoint[0],TemporaryAnchor.testPutInPioneerPoint[1]);
+                        }
+                        
                         
                         break;
-                    case "Go":
+                    case "testCorrection":
                         motor1.MxMotorSetPosition(obj_pos);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
                         RunHSV();
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
                         ws.Send(UTF8bytes);
                         break;
-                    case "Go_test":
-                        motor1.MxMotorSetPosition(obj_pos);
-                        uRServerAction_right.GripperOpen();
-                        uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
-                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-
-                        clear_all();
-
-                        mode_1 = false;
-                        mode_2 = false;
-                        //mode_3 = false;
-                        drink_5 = true;
-
-                        cap = new Emgu.CV.VideoCapture(2, VideoCapture.API.DShow);
-
-                        objectWrapper_side = new YoloWrapper("yolov3.cfg", "yolov3.weights", "coco.names");
-                        while (mode_3)
-                        {
-                            Show_capture(sender, e);
-                        }
-                        while (mode_4)
-                        {
-                            Show_capture_b(sender, e);
-                        }
-                        moveToPioneer(0, 0);
+                    case "testPutInPioneer":
+                        moveToPioneer(0, 0,TemporaryAnchor.testPutInPioneerPoint[0],TemporaryAnchor.testPutInPioneerPoint[1]);
                         break;
                     case "RightMoveJ":
                         var length = data.Length;
@@ -382,12 +367,12 @@ namespace multimodal
             p.Start();
         }
         // Clip cup to Pioneer, using Correction values (X and Z)
-        private void moveToPioneer(float X,float Z)
+        private void moveToPioneer(float X,float Z,float cup_one_rX, float cup_one_rY)
         {
-            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.21324f, cup_one_r[1] + 0.0305f + 0.060f, 3.1735f, -0.0215f, 0.0488f });
-            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.21324f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.Move(new float[] { cup_one_rX - 0.05335f, 0.21324f, cup_one_rY + 0.0305f + 0.060f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.Move(new float[] { cup_one_rX - 0.05335f, 0.21324f, cup_one_rY + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
             uRServerAction_right.GripperClose();
-            uRServerAction_right.Move(new float[] { cup_one_r[0] - 0.05335f, 0.11476f, cup_one_r[1] + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
+            uRServerAction_right.Move(new float[] { cup_one_rX - 0.05335f, 0.11476f, cup_one_rY + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
             // 把飲料拿到Pioneer杯架上方
             uRServerAction_right.Move(new float[] { -0.20497f+X, 0.11476f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
             // 把飲料放入杯架
