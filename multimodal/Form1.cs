@@ -310,7 +310,7 @@ namespace multimodal
                         {
                             Show_capture_b(sender, e);
                         }
-                        if(Data.Length > 2){
+                        if(data.Length > 2){
                             Console.WriteLine($"Correction {float.Parse(data[1])} , {float.Parse(data[2])}");
                             moveToPioneer(float.Parse(data[1]), float.Parse(data[2]),cup_one_r[0],cup_one_r[1]);
                         }else
