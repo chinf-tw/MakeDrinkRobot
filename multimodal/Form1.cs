@@ -160,7 +160,7 @@ namespace multimodal
         MxMotor motor1 = new MxMotor();
         int test;
         int initial_pos = 2020;
-        int obj_pos = 1634;
+        int obj_pos = 1548;
 
         
         YoloWrapper gestureWrapper;
@@ -196,7 +196,8 @@ namespace multimodal
         int brx, bry, bcx, bcy, blx, bly; //瓶子右、中、左 x ,y
         int brw, brh, bcw, bch, blw, blh; //瓶子右、中、左 width, height
 
-        int line = 160; //放置區及瓶子區分隔線
+        //int line = 160; //放置區及瓶子區分隔線
+        int line = 150; //放置區及瓶子區分隔線
 
         bool mode_1 = true; //選取飲料(true為未選)
         bool mode_1_first_answer = true;
