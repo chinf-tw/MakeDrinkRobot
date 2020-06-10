@@ -160,7 +160,7 @@ namespace multimodal
         MxMotor motor1 = new MxMotor();
         int test;
         int initial_pos = 2020;
-        int obj_pos = 1548;
+        int obj_pos = 1402;
 
         
         YoloWrapper gestureWrapper;
@@ -197,7 +197,7 @@ namespace multimodal
         int brw, brh, bcw, bch, blw, blh; //瓶子右、中、左 width, height
 
         //int line = 160; //放置區及瓶子區分隔線
-        int line = 150; //放置區及瓶子區分隔線
+        int line = 200; //放置區及瓶子區分隔線
 
         bool mode_1 = true; //選取飲料(true為未選)
         bool mode_1_first_answer = true;
@@ -326,12 +326,23 @@ namespace multimodal
                     case "testCorrection":
                         motor1.MxMotorSetPosition(obj_pos);
                         uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
-                        RunHSV();
+                        //RunHSV();
                         byte[] UTF8bytes = Encoding.UTF8.GetBytes("doneDrink");
                         ws.Send(UTF8bytes);
                         break;
                     case "testPutInPioneer":
-                        moveToPioneer(0, 0,TemporaryAnchor.testPutInPioneerPoint[0],TemporaryAnchor.testPutInPioneerPoint[1]);
+                        uRServerAction_right.GripperOpen();
+                        uRServerAction_right.Move(TemporaryAnchor.PictureAreaAfter);
+                        uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
+                        if (data.Length < 2)
+                        {
+                            moveToPioneer(0, 0, TemporaryAnchor.testPutInPioneerPoint[0], TemporaryAnchor.testPutInPioneerPoint[1]);
+                        }
+                        else
+                        {
+                            moveToPioneer(float.Parse(data[1]), float.Parse(data[2]), TemporaryAnchor.testPutInPioneerPoint[0], TemporaryAnchor.testPutInPioneerPoint[1]);
+                        }
+                        
                         break;
                     case "RightMoveJ":
                         var length = data.Length;
@@ -375,11 +386,15 @@ namespace multimodal
             uRServerAction_right.GripperClose();
             uRServerAction_right.Move(new float[] { cup_one_rX - 0.05335f, 0.11476f, cup_one_rY + 0.0305f - 0.01f, 3.1735f, -0.0215f, 0.0488f });
             // 把飲料拿到Pioneer杯架上方
-            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.11476f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.Move(new float[] { -0.2046f+X, 0.11476f, 0.5098f+Z, 2.9428f, -0.00609f, -1.0452f });
             // 把飲料放入杯架
-            uRServerAction_right.Move(new float[] { -0.20497f+X, 0.24239f, 0.47688f+Z, 2.9428f, -0.00609f, -1.0452f });
+            //float Xoffset = 0.03f;
+            //float Zoffset = -0.01f;
+            uRServerAction_right.Move(new float[] { -0.2046f + X, 0.24239f, 0.5098f + Z, 2.9428f, -0.00609f, -1.0452f });
+            //uRServerAction_right.Move(new float[] { -0.20497f+X+ Xoffset, 0.24239f, 0.47688f+Z + Zoffset, 2.9428f, -0.00609f, -1.0452f });
             uRServerAction_right.GripperOpen();
-            uRServerAction_right.Move(new float[] { -0.20497f + X, 0.12076f, 0.47688f + Z, 2.9428f, -0.00609f, -1.0452f });
+            uRServerAction_right.Move(new float[] { -0.2046f + X, 0.11476f, 0.5098f + Z, 2.9428f, -0.00609f, -1.0452f });
+            //uRServerAction_right.Move(new float[] { -0.20497f + X + Xoffset, 0.12076f, 0.47688f + Z + Zoffset, 2.9428f, -0.00609f, -1.0452f });
             uRServerAction_right.Move(RobotInitial.robot_initial_pos_r);
         }
 
